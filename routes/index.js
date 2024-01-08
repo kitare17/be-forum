@@ -1,6 +1,7 @@
 var express = require('express');
-var router = express.Router();
-var dishesRouter=require("./dishes")
+
+var dishesRouter=require("./dishes");
+var promotionsRouter=require("./promotions");
 //
 // /* GET home page. */
 // router.get('/', function(req, res, next) {
@@ -9,6 +10,7 @@ var dishesRouter=require("./dishes")
 
 function routers(app){
    app.use("/dishes",dishesRouter);
+   app.use("/promotions",promotionsRouter);
 }
 
 module.exports = routers;
