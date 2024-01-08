@@ -1,11 +1,10 @@
-const Promotion = require("../model/Promotion");
+const Leader=require("../model/Leader");
+class LeaderController{
 
-class PromotionController {
-
-    //  [GET /promotions/:promoId]
+    //  [GET /leaders/:leadId]
     async show(req, res, next) {
-        const id = req.params.promoId;
-        const promotion = await Promotion.find({"_id": id})
+        const id = req.params.leadId;
+        const leader = await Leader.find({"_id": id})
             .then(
                 console.log("ok")
             )
@@ -16,17 +15,17 @@ class PromotionController {
                     })
                 }
             );
-        res.json({promotion: promotion});
+        res.json({leader: leader});
     }
 
-    //  [PUT /promotions/:promoId]
+    //  [PUT /leaders/:leadId]
     async update(req, res, next) {
-        const id = req.params.promoId;
-        const promotionUpdate = req.body.promotion;
-        const promotion = await Promotion.updateOne(
+        const id = req.params.leadId;
+        const leaderUpdate = req.body.leader;
+        const leader = await Leader.updateOne(
             {"_id": id},
             {
-                $set: {"name": promotionUpdate.name}
+                $set: {"name": leaderUpdate.name}
             }
         )
             .then(
@@ -39,13 +38,13 @@ class PromotionController {
                     })
                 }
             );
-        res.json(promotion);
+        res.json(leader);
     }
 
-    //  [POST /promotions/:promoId]
+    //  [POST /leaders/:leadId]
     async create(req, res, next) {
-        const promotionNew = new Promotion(req.body.promotion);
-        await promotionNew.save()
+        const leaderNew = new Leader(req.body.leader);
+        await leaderNew.save()
             .then(
                 res.json({
                     message: "ok"
@@ -60,10 +59,10 @@ class PromotionController {
             );
     }
 
-    // [DELETE /promotions/:promoId]
+    // [DELETE /leaders/:leadId]
     async remove(req, res, next) {
-        const id = req.params.promoId;
-        const promotion = await Promotion.deleteOne({"_id": id})
+        const id = req.params.leadId;
+        const leader = await Leader.deleteOne({"_id": id})
             .then(
                 console.log("ok")
             )
@@ -74,8 +73,8 @@ class PromotionController {
                     })
                 }
             );
-        res.json(promotion);
+        res.json(leader);
     }
 }
 
-module.exports = new PromotionController();
+module.exports = new LeaderController();
