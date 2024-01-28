@@ -14,4 +14,10 @@ router.post("/", disherController.create);
 //[DELETE /dishes/:dishId]
 router.delete("/:dishId", disherController.remove);
 
+
+//[GET /dishes/:dishId/comments]
+router.get("/:dishId/comments", disherController.showComment);
+
+//[GET /dishes/:dishId/comments]
+router.post("/:dishId/comments", disherController.createComment);
 module.exports = router;

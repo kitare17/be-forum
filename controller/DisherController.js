@@ -31,7 +31,7 @@ class DisherController {
             }
         )
             .then(
-                console.log("Update dishes "+id+" success")
+                console.log("Update dishes " + id + " success")
             )
             .catch(
                 (error) => {
@@ -46,7 +46,7 @@ class DisherController {
     //  [POST /dishes/:dishId]
     async create(req, res, next) {
         const dishNew = new Dish(req.body.dish);
-           await dishNew.save()
+        await dishNew.save()
             .then(
                 res.json({
                     message: "ok"
@@ -77,6 +77,37 @@ class DisherController {
             );
         res.json(dish);
     }
+
+    // [GET /dishes/:dishId/comment
+    async showComment(req, res, next){
+        Dish.findOne()
+            .then(
+                (dish)=>
+                    res.json(dish.comments)
+            )
+            .catch(
+                error=>
+                    res.json(error)
+            )
+    }
+    // [POST /dishes/:dishId/comment
+    async createComment(req, res, next){
+        var newComment=req.body.comment;
+        console.log(newComment);
+        Dish.findOne()
+            .then(
+                (dish)=>{
+                    dish.comments.push(newComment);
+                    dish.save();
+                    res.json(newComment);
+                }
+            )
+            .catch(
+                error=>
+                    res.json(error)
+            )
+    }
 }
+
 
 module.exports = new DisherController();
