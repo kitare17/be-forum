@@ -4,7 +4,7 @@ const User=require("../../model/User");
 function authentication(req, res, next) {
     var token = req.body.token;
     jwt.verify(token, "kitarenfaklhek", (err, user) => {
-        if (err) res.send("loi");
+        if (err) res.json(err);
         else {
             res.send("dc roi nhe")
         }

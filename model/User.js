@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = new Schemal({
     username: {
         type: String,
-        required: [true, "require username"]
+        required: [true, "require username"],
+        unique:true
     },
     password: {
         type: String,

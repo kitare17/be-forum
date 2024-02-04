@@ -4,7 +4,7 @@ var userController=require('../controller/UserController')
 var {authentication,verifyAdmin}=require("../config/jwt/authentication")
 /* GET users listing. */
 router.get('/',verifyAdmin, userController.show);
-router.post('/',userController.create)
-router.get("/login",userController.login)
+router.post('/register',userController.create)
+router.post("/login",userController.login)
 router.get("/check",authentication);
 module.exports = router;
