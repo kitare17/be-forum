@@ -6,7 +6,7 @@ var logger = require('morgan');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const db=require('./config/db');
-
+const cors=require('cors');
 const router=require('./routes')
 
 var app = express();
@@ -23,6 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(morgan('combined'));
+app.use(cors())
 
 //db config
 db.connect();
