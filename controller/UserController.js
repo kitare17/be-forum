@@ -16,7 +16,6 @@ class UserController {
             .catch(
                 error => res.json(error)
             );
-
     }
 
     async login(req, res, next) {
@@ -33,6 +32,30 @@ class UserController {
         } else {
             res.send("Username or Password are not correct");
         }
+    }
+
+    async update(req, res, next) { 
+        const username = req.body.username;
+        const passwordUpdate = req.body.password;
+        const fullnameUpdate = req.body.fullname;
+        const user = await User.updateOne(
+            {"username": username},
+            {
+                $set: {"password":passwordUpdate,
+                         "password":fullnameUpdate}
+            }
+        )
+            .then(
+                console.log("Update " + username + " success")
+            )
+            .catch(
+                (error) => {
+                    res.json({
+                        error: "404"
+                    })
+                }
+            );
+        res.json(username + passwordUpdate + fullnameUpdate + "update success");
     }
 
 }
