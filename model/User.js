@@ -6,7 +6,7 @@ const User = new Schemal({
     username: {
         type: String,
         required: [true, "require username"],
-        unique:true
+        unique: true
     },
     password: {
         type: String,
@@ -16,6 +16,17 @@ const User = new Schemal({
     fullname: {
         type: String,
         required: [true, "require fullname"]
+    },
+    email: {
+        type: String,
+        required: [true, "require email"],
+        unique: true
+
+    },
+    phone: {
+        type: String,
+        required: [true, "require phone"],
+        unique: true
     },
     admin: {
         type: Boolean,
