@@ -59,10 +59,14 @@ class UserController {
     async updateProfile(req, res, next) { 
         const username = req.body.username;
         const fullnameUpdate = req.body.fullname;
+        const emailUpdate = req.body.email;
+        const phoneUpdate = req.body.phone;
         const user = await User.updateOne(
             {"username": username},
             {
-                $set: {"fullname":fullnameUpdate}
+                $set: {"fullname":fullnameUpdate,
+                        "email":emailUpdate,
+                        "phone":phoneUpdate}
             }
         )
             .then(
@@ -75,7 +79,7 @@ class UserController {
                     })
                 }
             );
-        res.json(username + fullnameUpdate + "update success");
+        res.json(username + fullnameUpdate + emailUpdate + phoneUpdate + "update success");
     }
 
 }
