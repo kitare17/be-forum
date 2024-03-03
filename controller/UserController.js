@@ -27,6 +27,8 @@ class UserController {
         if (user) {
             var token = user.signJWT();
             res.json({
+                username:user.username,
+                fullname:user.fullname,
                 token: token
             })
         } else {
