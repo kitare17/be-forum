@@ -36,15 +36,13 @@ class UserController {
         }
     }
 
-    async update(req, res, next) { 
+    async updatePassword(req, res, next) { 
         const username = req.body.username;
         const passwordUpdate = req.body.password;
-        const fullnameUpdate = req.body.fullname;
         const user = await User.updateOne(
             {"username": username},
             {
-                $set: {"password":passwordUpdate,
-                         "password":fullnameUpdate}
+                $set: {"password":passwordUpdate}
             }
         )
             .then(
@@ -57,7 +55,33 @@ class UserController {
                     })
                 }
             );
-        res.json(username + passwordUpdate + fullnameUpdate + "update success");
+        res.json(username + passwordUpdate + "update success");
+    }
+
+    async updateProfile(req, res, next) { 
+        const username = req.body.username;
+        const fullnameUpdate = req.body.fullname;
+        const emailUpdate = req.body.email;
+        const phoneUpdate = req.body.phone;
+        const user = await User.updateOne(
+            {"username": username},
+            {
+                $set: {"fullname":fullnameUpdate,
+                        "email":emailUpdate,
+                        "phone":phoneUpdate}
+            }
+        )
+            .then(
+                console.log( username + " success")
+            )
+            .catch(
+                (error) => {
+                    res.json({
+                        error: "404"
+                    })
+                }
+            );
+        res.send("successfully");
     }
 
 }

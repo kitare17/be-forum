@@ -6,6 +6,6 @@ var {authentication,verifyAdmin}=require("../config/jwt/authentication")
 router.get('/',verifyAdmin, userController.show);
 router.post('/register',userController.create)
 router.post("/login",userController.login)
-router.put("/update",userController.update)
+router.put("/update-profile",userController.update)  //update profile
 router.get("/check",authentication);
 module.exports = router;
