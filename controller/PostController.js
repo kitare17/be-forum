@@ -18,16 +18,29 @@ class PostController {
     }
 
     async showPost(req, res, next) {
-        await Post.find().populate('creator').populate({
-            path: 'comments',
-            populate: {
-                path: 'userComment',
-                model: 'User'
-            }
-        })
+        var page = req.query.page || 1;
+        var limitPage = 6;
+        var totalPosts = await Post.countDocuments();
+        var maxPage = Math.ceil(totalPosts / limitPage);
+        await Post
+            .find()
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .populate('creator')
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User'
+                }
+            })
             .then(
                 (posts) => {
-                    res.json(posts)
+                    res.json({
+                            posts: posts,
+                            maxPage: maxPage
+                        }
+                    )
                 }
             )
             .catch(
