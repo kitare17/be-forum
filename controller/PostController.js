@@ -1,4 +1,5 @@
 const Post = require("../model/Post")
+const Comment = require("../model/Post")
 
 class PostController {
 
@@ -26,12 +27,17 @@ class PostController {
             .find()
             .skip((page - 1) * limitPage)
             .limit(limitPage)
-            .populate('creator')
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
             .populate({
                 path: 'comments',
                 populate: {
                     path: 'userComment',
-                    model: 'User'
+                    model: 'User',
+                    select: 'username fullname'
                 }
             })
             .then(
@@ -47,6 +53,66 @@ class PostController {
                 (err) => {
                     res.json(err)
                 }
+            )
+    }
+    async getOne(req, res, next){
+        const id=req.params.idPost;
+        await Post.findOne({"_id":id})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+            .then(
+                (post)=>{
+                    res.json(post)
+                }
+            )
+            .catch(
+                err=>{
+                    err
+                }
+            )
+    }
+
+    async addComment(req, res, next) {
+        const newComment = req.body.commentPost;
+        const id = req.params.idPost;
+        await Post.findOne({"_id": id})
+            .then(
+                (post) => {
+                    if (post) {
+
+                        post.comments.push({
+                            detail: newComment.detail,
+                            userComment: newComment.userComment
+                        })
+                        post.save()
+                            .then(
+                                post => {
+                                    res.json(post);
+                                }
+                            )
+                            .catch(
+                                err => {
+                                    res.json(err);
+                                }
+                            )
+                    } else
+                        res.json("not found")
+
+                }
+            )
+            .catch(
+                (err) => res.json(err)
             )
     }
 }

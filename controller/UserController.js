@@ -29,6 +29,8 @@ class UserController {
             res.json({
                 username:user.username,
                 fullname:user.fullname,
+                userId:user._id,
+                phone: user._id,
                 token: token
             })
         } else {
