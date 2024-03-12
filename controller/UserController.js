@@ -35,6 +35,7 @@ class UserController {
                 token: token
             })
         } else {
+            res.status(401);
             res.send("Username or Password are not correct");
         }
     }
