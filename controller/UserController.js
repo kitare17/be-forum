@@ -30,7 +30,8 @@ class UserController {
                 username:user.username,
                 fullname:user.fullname,
                 userId:user._id,
-                phone: user._id,
+                phone: user.phone,
+                email: user.email,
                 token: token
             })
         } else {
