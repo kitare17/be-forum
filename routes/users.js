@@ -7,5 +7,6 @@ router.get('/',verifyAdmin, userController.show);
 router.post('/register',userController.create)
 router.post("/login",userController.login)
 router.put("/update-profile",userController.updateProfile)
+router.put("/update-password",userController.updatePassword)
 router.get("/check",authentication);
 module.exports = router;
