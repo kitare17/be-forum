@@ -43,23 +43,32 @@ class UserController {
     async updatePassword(req, res, next) { 
         const username = req.body.username;
         const passwordUpdate = req.body.password;
-        const user = await User.updateOne(
-            {"username": username},
-            {
-                $set: {"password":passwordUpdate}
-            }
-        )
-            .then(
-                console.log("Update " + username + " success")
-            )
-            .catch(
-                (error) => {
-                    res.json({
-                        error: "404"
-                    })
+        const oldPassword = req.body.oldPassword;
+        const confirmPass = req.body.confirmPassword
+        var userx = await User.findOne({"username": username, "password": oldPassword});
+        if(userx && confirmPass == passwordUpdate) {
+            const user = await User.updateOne(
+                {"username": username},
+                {
+                    $set: {"password":passwordUpdate}
                 }
-            );
-        res.json(username + passwordUpdate + "update success");
+            )
+                .then(
+                    console.log("Update " + username + " success")
+                )
+                .catch(
+                    (error) => {
+                        res.json({
+                            error: "401"
+                        })
+                    }
+                );
+            res.json("update success");
+        } else {
+            res.status(401);
+            res.json("fail")
+        }
+        
     }
 
     async updateProfile(req, res, next) { 
