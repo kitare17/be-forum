@@ -25,6 +25,7 @@ class PostController {
         var maxPage = Math.ceil(totalPosts / limitPage);
         await Post
             .find()
+            .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
             .populate({
