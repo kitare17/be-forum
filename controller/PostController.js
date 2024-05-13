@@ -56,9 +56,10 @@ class PostController {
                 }
             )
     }
-    async getOne(req, res, next){
-        const id=req.params.idPost;
-        await Post.findOne({"_id":id})
+
+    async getOne(req, res, next) {
+        const id = req.params.idPost;
+        await Post.findOne({"_id": id})
             .populate({
                 path: 'creator',
                 select: 'username fullname'
@@ -73,12 +74,12 @@ class PostController {
                 }
             })
             .then(
-                (post)=>{
+                (post) => {
                     res.json(post)
                 }
             )
             .catch(
-                err=>{
+                err => {
                     err
                 }
             )
@@ -88,10 +89,22 @@ class PostController {
         const newComment = req.body.commentPost;
         const id = req.params.idPost;
         await Post.findOne({"_id": id})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
             .then(
                 (post) => {
                     if (post) {
-
                         post.comments.push({
                             detail: newComment.detail,
                             userComment: newComment.userComment
@@ -99,7 +112,28 @@ class PostController {
                         post.save()
                             .then(
                                 post => {
-                                    res.json(post);
+                                    Post.findOne({"_id": id})
+                                        .populate({
+                                            path: 'creator',
+                                            select: 'username fullname'
+                                        })
+                                        .populate({
+                                            path: 'comments',
+                                            populate: {
+                                                path: 'userComment',
+                                                model: 'User',
+                                                select: 'username fullname'
+                                            }
+                                        })
+                                        .then(post => {
+                                            res.json(post);
+                                        })
+                                        .catch(
+                                            err => {
+                                                res.json(err);
+                                            }
+                                        )
+
                                 }
                             )
                             .catch(
@@ -110,6 +144,71 @@ class PostController {
                     } else
                         res.json("not found")
 
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
+    }
+
+    async likePost(req, res, next) {
+        const userId = "65f6aa46e21e50bbf7cf0e1c";
+
+        const id = req.params.idPost;
+        await Post.findOne({"_id": id})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+            .then(
+                (post) => {
+                    if (!post.likes.includes(userId)) {
+                        post.likes = [...post.likes, userId];
+                        post.save();
+                    }
+                    res.json(post);
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
+    }
+
+
+    async unlikePost(req, res, next) {
+        const userId = "65f6aa46e21e50bbf7cf0e1c";
+
+        const id = req.params.idPost;
+        await Post.findOne({"_id": id})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+            .then(
+                (post) => {
+                    if (post.likes.includes(userId)) {
+                        const index = post.likes.indexOf(userId)
+                        post.likes.splice(userId, 1)
+                        post.save();
+                    }
+                    res.json(post);
                 }
             )
             .catch(
