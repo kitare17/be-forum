@@ -8,6 +8,7 @@ router.post("/",postController.createPost);
 router.get("/",postController.showPost);
 router.get("/:idPost",postController.getOne);
 router.put("/:idPost/comments",postController.addComment);
-
+router.put("/:idPost/likes",postController.likePost)
+router.put("/:idPost/unlikes",postController.unlikePost)
 
 module.exports = router;
