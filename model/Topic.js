@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
-
+var slug = require('mongoose-slug-generator');
+mongoose.plugin(slug);
 
 
 const Topic = new Schema({
@@ -15,6 +16,10 @@ const Topic = new Schema({
         imgUrl:{
             type: String,
             required: true
+        },
+        slug : {
+            type : String,
+            slug: 'title'
         }
     },
     {

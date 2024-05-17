@@ -45,7 +45,12 @@ const Post = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: 'User'
             }
-        ]
+        ],
+        topic: {
+            type: Schema.Types.ObjectId,
+            ref: 'Topic'
+        }
+
     },
     {
         timestamps: true
