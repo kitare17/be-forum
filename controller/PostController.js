@@ -34,6 +34,9 @@ class PostController {
 
             })
             .populate({
+                path: 'topic'
+            })
+            .populate({
                 path: 'comments',
                 populate: {
                     path: 'userComment',
@@ -73,6 +76,9 @@ class PostController {
                     select: 'username fullname'
                 }
             })
+            .populate({
+                path: 'topic'
+            })
             .then(
                 (post) => {
                     res.json(post)
@@ -101,6 +107,9 @@ class PostController {
                     model: 'User',
                     select: 'username fullname'
                 }
+            })
+            .populate({
+                path: 'topic'
             })
             .then(
                 (post) => {
@@ -160,6 +169,9 @@ class PostController {
                 path: 'creator',
                 select: 'username fullname'
 
+            })
+            .populate({
+                path: 'topic'
             })
             .populate({
                 path: 'comments',

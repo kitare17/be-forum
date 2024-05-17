@@ -1,4 +1,5 @@
 const Topic = require("../model/Topic");
+const Post = require("../model/Post");
 
 class TopicController {
 
@@ -56,7 +57,7 @@ class TopicController {
         console.log(topicId)
 
         const totalPosts = await Post.find({"topic": topicId}).countDocuments();
-        console.log(totalPosts);
+
 
 
         await Post.find({"topic": topicId})
@@ -64,13 +65,26 @@ class TopicController {
             .skip((page - 1) * limitPage)
             .limit(limitPage)
             .populate({
-                path: 'topic',
-                match: {_id: topicId}
+                path: 'topic'
+            })
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
             })
             .then(
                 (posts) => {
                     res.json({
-                        posts: posts
+                        posts: posts,
+                        maxPage:Math.ceil(totalPosts / limitPage)
                     })
                 }
             )
