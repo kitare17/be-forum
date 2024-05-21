@@ -11,10 +11,10 @@ const TodoList = new Schema({
             type: String, 
         },
         startDate:{
-            type: String,
+            type: Date,
         },
         endDate:{
-            type: String,
+            type: Date,
         },
         label: {
             type: String,
