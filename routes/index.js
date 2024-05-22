@@ -3,6 +3,7 @@ const postsRouter = require("./posts");
 const salePostsRouter = require("./saleposts");
 const categoriesRouter = require("./categories");
 const topicsRouter = require("./topics");
+const reportBlogRouter = require("./report-blog");
 
 
 function routers(app) {
@@ -11,6 +12,7 @@ function routers(app) {
     app.use("/saleposts", salePostsRouter);
     app.use("/categories", categoriesRouter);
     app.use("/topics", topicsRouter);
+    app.use("/report-blog", reportBlogRouter);
 
 }
 
