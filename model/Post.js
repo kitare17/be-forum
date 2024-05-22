@@ -39,7 +39,18 @@ const Post = new Schema({
             enum: ['Đang hoạt động', 'Bị khóa'],
             default: 'Đang hoạt động'
         },
-        comments: [Comment]
+        comments: [Comment],
+        likes:[
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ],
+        topic: {
+            type: Schema.Types.ObjectId,
+            ref: 'Topic'
+        }
+
     },
     {
         timestamps: true
