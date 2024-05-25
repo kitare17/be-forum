@@ -3,15 +3,18 @@ const postsRouter = require("./posts");
 const salePostsRouter = require("./saleposts");
 const categoriesRouter = require("./categories");
 const topicsRouter = require("./topics");
+const deckRouter = require("./decks");
 
+const quizRouter = require("./quiz");
 
 function routers(app) {
-    app.use("/users", usersRouter);
-    app.use("/posts", postsRouter);
-    app.use("/saleposts", salePostsRouter);
-    app.use("/categories", categoriesRouter);
-    app.use("/topics", topicsRouter);
-
+  app.use("/users", usersRouter);
+  app.use("/posts", postsRouter);
+  app.use("/saleposts", salePostsRouter);
+  app.use("/categories", categoriesRouter);
+  app.use("/topics", topicsRouter);
+  app.use("/deck", deckRouter);
+  app.use("/quiz", quizRouter);
 }
 
 module.exports = routers;
