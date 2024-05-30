@@ -4,26 +4,21 @@ var slug = require('mongoose-slug-generator');
 mongoose.plugin(slug);
 
 
-const Topic = new Schema({
-        title: {
+const Category = new Schema({
+        name: {
             type: String,
             required: true
         },
-        detail: {
-            type: String,
-            required: true
-        },
-        imgUrl:{
-            type: String,
-            required: true
+        description: {
+            type: String
         },
         slug : {
             type : String,
-            slug: 'title'
+            slug: 'name'
         }
     },
     {
         timestamps: true
     })
 
-module.exports = mongoose.model("Topic", Topic);
+module.exports = mongoose.model("Category", Category);

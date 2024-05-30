@@ -8,7 +8,7 @@ class UserController {
     }
 
     async create(req, res, next) {
-        const { email, password, username } = req.body;
+        const {email, password, username} = req.body;
         try {
             const existedUserEmail = await User.findOne({
                 email: email,
@@ -33,13 +33,16 @@ class UserController {
             }
 
             const hash = bcrypt.hashSync(password, 10);
-            console.log("hash", hash)
-
+            // console.log("hash", hash)
+            console.log(email + " " + password + " " + username)
             const createdUser = await User.create({
-                email,
-                password: hash,
-                username,
-            });
+                    email,
+                    password: hash,
+                    username,
+                    phone: undefined
+                })
+            ;
+
             if (createdUser) {
                 return res.json({
                     status: 200,
@@ -58,20 +61,28 @@ class UserController {
     async login(req, res, next) {
         var email = req.body.email;
         var password = req.body.password;
-        var userEmail = await User.findOne({ "email": email });
-        const comparePassword = bcrypt.compareSync(password, userEmail.password);
+        var userEmail = await User.findOne({"email": email});
 
         if (userEmail) {
-            var token = userEmail.signJWT();
-            return res.json({
-                username: userEmail?.userEmailname,
-                fullname: userEmail?.fullname,
-                userEmailId: userEmail._id,
-                phone: userEmail?.phone,
-                email: userEmail.email,
-                admin: userEmail?.admin,
-                token: token
-            })
+            const comparePassword = bcrypt.compareSync(password, userEmail.password);
+            if (comparePassword) {
+                var token = userEmail.signJWT();
+                return res.json({
+                    username: userEmail?.userEmailname,
+                    fullname: userEmail?.fullname,
+                    userEmailId: userEmail._id,
+                    phone: userEmail?.phone,
+                    email: userEmail.email,
+                    admin: userEmail?.admin,
+                    token: token
+                })
+            } else {
+                res.status(401).json({
+                    status: "Error",
+                    message: "Username or Password are not correct"
+                });
+            }
+
         } else {
             res.status(401).json({
                 status: "Error",
@@ -85,12 +96,12 @@ class UserController {
         const passwordUpdate = req.body.password;
         const oldPassword = req.body.oldPassword;
         const confirmPass = req.body.confirmPassword
-        var userx = await User.findOne({ "username": username, "password": oldPassword });
+        var userx = await User.findOne({"username": username, "password": oldPassword});
         if (userx && confirmPass == passwordUpdate) {
             const user = await User.updateOne(
-                { "username": username },
+                {"username": username},
                 {
-                    $set: { "password": passwordUpdate }
+                    $set: {"password": passwordUpdate}
                 }
             )
                 .then(
@@ -117,7 +128,7 @@ class UserController {
         const emailUpdate = req.body.email;
         const phoneUpdate = req.body.phone;
         const user = await User.updateOne(
-            { "username": username },
+            {"username": username},
             {
                 $set: {
                     "fullname": fullnameUpdate,
