@@ -185,8 +185,8 @@ class PostController {
     }
 
     async likePost(req, res, next) {
-        const userId = "65f6aa46e21e50bbf7cf0e1c";
-
+        const userId = req.body.userId;
+        console.log("like id: ",req.body.userId)
         const id = req.params.idPost;
         await Post.findOne({"_id": id})
             .populate({
@@ -229,7 +229,7 @@ class PostController {
 
 
     async unlikePost(req, res, next) {
-        const userId = "65f6aa46e21e50bbf7cf0e1c";
+        const userId = req.body.userId;
 
         const id = req.params.idPost;
         await Post.findOne({"_id": id})
