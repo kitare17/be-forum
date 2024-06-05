@@ -405,7 +405,79 @@ class PostController {
                 )
             })
     }
+    async removeComment(req, res, next) {
+        const dataBody = req.body;
 
+        const postId = req.params.idPost;
+
+        const commentId = req.params.commentId;
+
+        console.log(postId +" "+commentId);
+
+
+        await Post.findOne({"_id": postId})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+
+            .then((post) => {
+                if (post) {
+                    // console.log(JSON.stringify(commentId)===(JSON.stringify(post.comments[0]._id)))
+                    var index = post.comments.findIndex(
+                        comment => JSON.stringify(commentId) === JSON.stringify(comment._id))
+                    console.log("index", index)
+
+                    if (index >= 0) {
+                        post.comments.splice(index, 1);
+                        post.save()
+                            .then(updatePost => {
+                                updatePost.populate({
+                                    path: 'comments.replyComment',
+                                    populate: {
+                                        path: 'userComment',
+                                        model: 'User',
+                                        select: 'username fullname',
+                                    }
+                                }).then((resData) => {
+                                    return res.json(resData)
+                                })
+                            })
+                            .catch(err => {
+                                return res.json({
+                                    err: err
+                                })
+                            })
+
+                    } else {
+                        return res.status(500).json({
+                            message: "Not found comment"
+                        })
+                    }
+
+                } else {
+                    return res.status(500).json({
+                        message: "Not found post"
+                    })
+                }
+
+            })
+            .catch(err => {
+                return res.status(500).json({
+                    err: err,
+                    message: "Error when find post"
+                })
+            })
+
+    }
 
 }
 
