@@ -345,6 +345,47 @@ class PostController {
 
     }
 
+    async editDetail(req, res, next) {
+        const dataBody = req.body;
+        const postId = dataBody.postId;
+        const detail = dataBody.detail;
+        const title=dataBody.title;
+
+        await Post.findOne({"_id": postId})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+
+            .then((post) => {
+                if(post){
+                    post.detail=detail
+                    post.title=title
+                    post.save()
+
+                    res.json({
+                        post: post
+                    })
+                }
+
+            })
+            .catch(err => {
+                return res.status(500).json({
+                    err: err,
+                    message: "Error when find post"
+                })
+            })
+
+    }
+
 
 }
 
