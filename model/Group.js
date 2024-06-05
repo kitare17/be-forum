@@ -25,6 +25,10 @@ const Group = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
+        password: {
+            type:String,
+            select:false
+        },
         slug: {
             type: String,
             slug: 'groupName',

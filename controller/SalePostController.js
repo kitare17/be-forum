@@ -57,7 +57,7 @@ class SalePostController {
 
     async showSalePost(req, res, next) { //done
         var page = req.query.page || 1;
-        var limitPage = 6;
+        var limitPage = 8;
         var totalPosts = await SalePost.countDocuments();
         var maxPage = Math.ceil(totalPosts / limitPage);
         await SalePost
