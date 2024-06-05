@@ -14,4 +14,5 @@ router.post("/replyComment",postController.relyComment);
 router.put("/editDetail",postController.editDetail);
 router.delete("/:idPost",postController.removePost);
 router.delete("/:idPost/comments/:commentId",postController.removeComment);
+
 module.exports = router;

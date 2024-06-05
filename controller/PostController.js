@@ -404,8 +404,6 @@ class PostController {
                     }
                 )
             })
-
-
     }
     async removeComment(req, res, next) {
         const dataBody = req.body;
