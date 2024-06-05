@@ -386,6 +386,28 @@ class PostController {
 
     }
 
+    async removePost(req, res, next) {
+        const postId=req.params.idPost;
+        Post.remove({"_id": postId})
+            .then((post)=>{
+                res.status(200).json(
+                    {
+                        message:"Xóa bài viết thành công"
+                    }
+                )
+            })
+            .catch((err)=>{
+                res.status(500).json(
+                    {
+                        err:err,
+                        message:"Xóa bài viết không thành công"
+                    }
+                )
+            })
+
+
+    }
+
 
 }
 
