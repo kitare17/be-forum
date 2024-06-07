@@ -1,6 +1,6 @@
 const Group = require("../model/Group");
-
-
+const GroupNotificaton=require("../model/GroupNotification");
+const Post = require("../model/Post");
 
 class GroupController {
     async createGroup(req, res, next) {
@@ -76,6 +76,81 @@ class GroupController {
                 }
             )
     }
+
+
+    async createGroupNotification(req, res, next) {
+        const groupNotificationDataBody = req.body;
+        const newGroupNotification = new GroupNotificaton(groupNotificationDataBody);
+        await newGroupNotification.save()
+            .then(
+                (groupNotification) => {
+                    groupNotification.populate({
+                        path: 'group',
+                    })
+                        .then(
+                            (resData) => {
+                                return res.json(resData);
+
+                            }
+                        )
+
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
+    }
+
+
+    async removeNotification(req, res, next) {
+        const notificationId=req.params.notificationId;
+        GroupNotificaton.remove({"_id": notificationId})
+            .then((post)=>{
+                res.status(200).json(
+                    {
+                        message:"Xóa thông báo thành công"
+                    }
+                )
+            })
+            .catch((err)=>{
+                res.status(500).json(
+                    {
+                        err:err,
+                        message:"Xóa thông báo không thành công"
+                    }
+                )
+            })
+    }
+
+    async removeGroup(req, res, next) {
+        const groupId=req.params.groupId;
+        Group.remove({"_id": groupId})
+            .then((post)=>{
+                res.status(200).json(
+                    {
+                        message:"Xóa nhóm thành công"
+                    }
+                )
+            })
+            .catch((err)=>{
+                res.status(500).json(
+                    {
+                        err:err,
+                        message:"Xóa nhóm không thành công"
+                    }
+                )
+            })
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
 module.exports = new GroupController();
