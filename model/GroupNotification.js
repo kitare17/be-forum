@@ -4,7 +4,7 @@ var slug = require('mongoose-slug-updater');
 mongoose.plugin(slug);
 
 
-const Topic = new Schema({
+const GroupNotificaton = new Schema({
         title: {
             type: String,
             required: true
@@ -13,18 +13,19 @@ const Topic = new Schema({
             type: String,
             required: true
         },
-        imgUrl:{
-            type: String,
-            required: true
+        group: {
+            type: Schema.Types.ObjectId,
+            ref: 'Group'
         },
-        slug : {
-            type : String,
+        slug: {
+            type: String,
             slug: 'title',
             unique:true
+
         }
     },
     {
         timestamps: true
     })
 
-module.exports = mongoose.model("Topic", Topic);
+module.exports = mongoose.model("GroupNotificaton", GroupNotificaton);

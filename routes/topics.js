@@ -5,8 +5,8 @@ const {verifyAdmin}=require("../config/jwt/authentication")
 
 
 router.post("/",topicController.createTopic);
-router.get("/",topicController.showPost);
-
+router.get("/",topicController.showTopic);
+router.get("/:slug",topicController.showTopicDetail)
 // router.get("/:idPost",postController.getOne);
 // router.put("/:idPost/comments",postController.addComment);
 
