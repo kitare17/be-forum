@@ -1,5 +1,6 @@
 const Group = require("../model/Group");
 const GroupNotificaton=require("../model/GroupNotification");
+
 const Post = require("../model/Post");
 
 class GroupController {
@@ -49,7 +50,7 @@ class GroupController {
 
     async showAllGroup(req, res, next) {
         var page = req.query.page || 1;
-        var limitPage = 6;
+        var limitPage = 12;
         var totalPosts = await Group.countDocuments();
         var maxPage = Math.ceil(totalPosts / limitPage);
         await Group
@@ -98,6 +99,34 @@ class GroupController {
             )
             .catch(
                 (err) => res.json(err)
+            )
+    }
+
+
+    async showAllNotification(req, res, next) {
+        var groupId=req.params.groupId;
+        var page = req.query.page || 1;
+        var limitPage = 6;
+        var totalNotification = await GroupNotificaton.countDocuments();
+        var maxPage = Math.ceil(totalNotification / limitPage);
+        await GroupNotificaton
+            .find({"group":groupId})
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .then(
+                (notifications) => {
+                    res.json({
+                        notifications: notifications,
+                            maxPage: maxPage
+                        }
+                    )
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
             )
     }
 
