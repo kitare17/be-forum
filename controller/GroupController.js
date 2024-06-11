@@ -232,7 +232,38 @@ class GroupController {
                 )
             })
     }
+    async removeMemberGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        const userId = req.body.userId;
+        Group.findOne({"_id": groupId})
 
+            .then((group) => {
+
+                if (group)
+
+                    if (group.members.includes(userId)) {
+                        var indexNember=group.members.indexOf(userId)
+                        console.log(indexNember)
+                        group.members.splice(indexNember,1)
+                        group.save()
+
+                    }
+                res.status(200).json(
+                    {
+                        members: group.members
+                    }
+                )
+
+
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
 
 }
 

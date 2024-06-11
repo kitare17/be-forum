@@ -14,4 +14,5 @@ router.get("/:groupId/notifications",GroupController.showAllNotification)
 
 router.get("/:groupId/members",GroupController.getMemberGroup)
 router.put("/:groupId/members",GroupController.joinGroup)
+router.delete("/:groupId/members",GroupController.removeMemberGroup)
 module.exports = router;
