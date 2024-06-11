@@ -1,5 +1,5 @@
 const Group = require("../model/Group");
-const GroupNotificaton=require("../model/GroupNotification");
+const GroupNotificaton = require("../model/GroupNotification");
 
 const Post = require("../model/Post");
 
@@ -104,20 +104,20 @@ class GroupController {
 
 
     async showAllNotification(req, res, next) {
-        var groupId=req.params.groupId;
+        var groupId = req.params.groupId;
         var page = req.query.page || 1;
         var limitPage = 6;
         var totalNotification = await GroupNotificaton.countDocuments();
         var maxPage = Math.ceil(totalNotification / limitPage);
         await GroupNotificaton
-            .find({"group":groupId})
+            .find({"group": groupId})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
             .then(
                 (notifications) => {
                     res.json({
-                        notifications: notifications,
+                            notifications: notifications,
                             maxPage: maxPage
                         }
                     )
@@ -132,52 +132,106 @@ class GroupController {
 
 
     async removeNotification(req, res, next) {
-        const notificationId=req.params.notificationId;
+        const notificationId = req.params.notificationId;
         GroupNotificaton.remove({"_id": notificationId})
-            .then((post)=>{
+            .then((post) => {
                 res.status(200).json(
                     {
-                        message:"Xóa thông báo thành công"
+                        message: "Xóa thông báo thành công"
                     }
                 )
             })
-            .catch((err)=>{
+            .catch((err) => {
                 res.status(500).json(
                     {
-                        err:err,
-                        message:"Xóa thông báo không thành công"
+                        err: err,
+                        message: "Xóa thông báo không thành công"
                     }
                 )
             })
     }
 
     async removeGroup(req, res, next) {
-        const groupId=req.params.groupId;
+        const groupId = req.params.groupId;
         Group.remove({"_id": groupId})
-            .then((post)=>{
+            .then((group) => {
                 res.status(200).json(
                     {
-                        message:"Xóa nhóm thành công"
+                        message: "Xóa nhóm thành công"
                     }
                 )
             })
-            .catch((err)=>{
+            .catch((err) => {
                 res.status(500).json(
                     {
-                        err:err,
-                        message:"Xóa nhóm không thành công"
+                        err: err,
+                        message: "Xóa nhóm không thành công"
                     }
                 )
             })
     }
 
+    async getMemberGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        Group.findOne({"_id": groupId})
+            .populate({
+                path: 'adminGroup',
+                select: 'username fullname'
+            })
+            .populate({
+                path: 'members',
+                select: 'username fullname'
+            })
+            .then((group) => {
+
+                if (group)
+
+                    res.status(200).json(
+                        {
+                            members: group.members
+                        }
+                    )
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err,
+                        message: "Xóa nhóm không thành công"
+                    }
+                )
+            })
+    }
+
+    async joinGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        const userId = req.body.userId;
+        Group.findOne({"_id": groupId})
+
+            .then((group) => {
+
+                if (group)
+
+                    if (!group.members.includes(userId)) {
+                        group.members = [...group.members, userId]
+                        group.save()
+
+                    }
+                res.status(200).json(
+                    {
+                        members: group.members
+                    }
+                )
 
 
-
-
-
-
-
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
 
 
 }
