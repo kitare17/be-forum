@@ -205,10 +205,10 @@ class GroupController {
     async joinGroup(req, res, next) {
         const groupId = req.params.groupId;
         const userId = req.body.userId;
-        const password=req.body.password;
+        const password = req.body.password;
 
 
-        Group.findOne({"_id": groupId,"password":password})
+        Group.findOne({"_id": groupId, "password": password})
 
             .then((group) => {
 
@@ -231,11 +231,12 @@ class GroupController {
                 res.status(500).json(
                     {
                         err: err,
-                        message:"Mật khẩu không chính xác vui lòng thử lại!!!"
+                        message: "Mật khẩu không chính xác vui lòng thử lại!!!"
                     }
                 )
             })
     }
+
     async removeMemberGroup(req, res, next) {
         const groupId = req.params.groupId;
         const userId = req.body.userId;
@@ -246,9 +247,9 @@ class GroupController {
                 if (group)
 
                     if (group.members.includes(userId)) {
-                        var indexNember=group.members.indexOf(userId)
+                        var indexNember = group.members.indexOf(userId)
                         console.log(indexNember)
-                        group.members.splice(indexNember,1)
+                        group.members.splice(indexNember, 1)
                         group.save()
 
                     }
@@ -261,6 +262,38 @@ class GroupController {
 
             })
             .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
+
+    async findGroup(req, res, next) {
+        const groupName = req.query.groupName;
+        var page = req.query.page || 1;
+        var limitPage = 12;
+        var totalPosts = await Group.find({groupName: { $regex: '.*' + groupName + '.*' } }).countDocuments();
+        var maxPage = Math.ceil(totalPosts / limitPage);
+
+        Group.find({groupName: { $regex: '.*' + groupName + '.*' } })
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .populate({
+                path: 'adminGroup',
+                select: 'username fullname'
+            })
+            .then((groups) => {
+                 console.log("groupName ",groupName)
+                res.json({
+                    groups: groups,
+                    maxPage:maxPage
+                })
+            })
+            .catch((err) => {
+                console.log(err)
                 res.status(500).json(
                     {
                         err: err
