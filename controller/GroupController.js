@@ -205,7 +205,10 @@ class GroupController {
     async joinGroup(req, res, next) {
         const groupId = req.params.groupId;
         const userId = req.body.userId;
-        Group.findOne({"_id": groupId})
+        const password=req.body.password;
+
+
+        Group.findOne({"_id": groupId,"password":password})
 
             .then((group) => {
 
@@ -227,7 +230,8 @@ class GroupController {
             .catch((err) => {
                 res.status(500).json(
                     {
-                        err: err
+                        err: err,
+                        message:"Mật khẩu không chính xác vui lòng thử lại!!!"
                     }
                 )
             })
