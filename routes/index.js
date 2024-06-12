@@ -4,6 +4,7 @@ const salePostsRouter = require("./saleposts");
 const categoriesRouter = require("./categories");
 const topicsRouter = require("./topics");
 const deckRouter = require("./decks");
+// const testRouter = require("./test");
 
 const quizRouter = require("./quiz");
 
@@ -14,7 +15,8 @@ function routers(app) {
   app.use("/categories", categoriesRouter);
   app.use("/topics", topicsRouter);
   app.use("/deck", deckRouter);
-  app.use("/quiz", quizRouter);
+  app.use("/quizzes", quizRouter);
+  // app.use("/quiz/test", testRouter);
 }
 
 module.exports = routers;

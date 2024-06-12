@@ -6,18 +6,14 @@ exports.createQuiz = async (req, res) => {
   const quizParams = req.body;
   console.log(quizParams);
 
-  // //   "deckId": "665217cb50eea828b6113562",
-  // "deskName": "",
-  // "regionType": "",
-  // "deckOwner": ""
-
-  if (
-    !quizParams.questions ||
-    !Array.isArray(quizParams.questions) ||
-    quizParams.questions.length === 0
-  ) {
+  if (!quizParams.questions) {
     return res.status(400).json({
       message: "Questions are required and should be a non-empty array",
+    });
+  }
+  if (quizParams.deckName === undefined) {
+    return res.status(400).json({
+      message: "Deck name cannot be empty",
     });
   }
 
@@ -32,55 +28,48 @@ exports.createQuiz = async (req, res) => {
           "deckName, regionType, and deckOwner are required if deckId is not provided",
       });
     }
-  }
-  const existingDeck = await Deck.findOne({ name: quizParams.deckName });
-  if (existingDeck) {
-    return res.status(400).json({
-      message: "Deck with the same name already exists",
-    });
-  }
-  try {
-    const savedQuestions = await Promise.all(
-      quizParams.questions.map(async (question) => {
-        const newQuestion = new Question(question);
-        await newQuestion.save();
-        return newQuestion;
-      })
-    );
-    ``;
+    try {
+      for (let i = 0; i < quizParams.questions.length; i++) {
+        const newQuestion = new Question(quizParams.questions[i]);
+        newQuestion.save();
+      }
 
-    console.log("savedQUestion", savedQuestions);
-    if (quizParams.deckId === undefined || quizParams.deckId === null) {
-      console.log("Created desk ne ....");
       const newDeck = new Deck({
-        name: quizParams.deskName,
+        name: quizParams.deckName,
         regionType: quizParams.regionType,
         deckOwner: quizParams.deckOwner,
       });
-
       const newFlashCard = new FlashCard({
-        questions: savedQuestions,
+        questions: quizParams.questions,
         deckId: newDeck._id,
       });
 
       await newDeck.save();
       await newFlashCard.save();
-      console.log("Created success");
-      res.status(201).json(newFlashCard);
-    } else {
-      const newFlashCard = new FlashCard({
-        questions: savedQuestions,
+      res.status(201).json(newDeck);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  } else {
+    try {
+      const existedFlashCard = await FlashCard.findOne({
         deckId: quizParams.deckId,
       });
-      await newFlashCard.save();
-      res.status(201).json(newFlashCard);
+
+      for (let i = 0; i < quizParams.questions.length; i++) {
+        const newQuestion = new Question(quizParams.questions[i]);
+        newQuestion.save();
+      }
+      existedFlashCard.questions = quizParams.questions;
+      await existedFlashCard.save();
+      res.status(201).json(existedFlashCard);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
   }
 };
-
 exports.getQuiz = async (req, res) => {
   try {
     const flashcards = await FlashCard.find()
