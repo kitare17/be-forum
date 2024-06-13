@@ -23,12 +23,12 @@ const TodoList = new Schema({
     },
     status: {
         type: String,
-        enum: ['Nhiệm vụ', 'Đang làm', 'Đã xong', 'Bỏ'],
+        enum: ['Nhiệm vụ', 'Đang làm', 'Đã xong', 'Hủy'],
         default: 'Nhiệm vụ'
     },
     prioritize: {
         type: String,
-        enum: ['Rất quan trọng', 'Quan trong', 'Binh thường'],
+        enum: ['Rất quan trọng', 'Quan trọng', 'Bình thường'],
         default: 'Binh thường'
     },
     user: {

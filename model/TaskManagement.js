@@ -2,14 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TaskManagement = new Schema({
-    task_name: {
+    taskName: {
         type: String,
     },
     createAt: {
         type: Date,
+        default: null
     },
     updateAt: {
         type: Date,
+        default: null
     },
     user: {
         type: Schema.Types.ObjectId,

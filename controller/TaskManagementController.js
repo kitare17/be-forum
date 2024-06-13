@@ -2,8 +2,6 @@ const TaskManagement = require("../model/TaskManagement")
 const TodoList = require("../model/TodoList")
 
 class TaskManagementController {
-
-
     async createTaskManagerment(req, res, next) {
         const taskManagermentData = req.body;
         const newtaskManagermentData = new TaskManagement(taskManagermentData);
@@ -14,12 +12,16 @@ class TaskManagementController {
                 }
             )
             .catch(
-                (err) => res.json(err)
+                (error) => {
+                    res.json({
+                        error: "404"
+                    })
+                }
             )
     }
 
     async showTaskManagerment(req, res, next) {
-        const userId = req.body.idUser;
+        const userId = req.params.userId;
         var page = req.query.page || 1;
         var limitPage = 6;
         var totalTaskManagement = await TaskManagement.countDocuments();
@@ -45,16 +47,37 @@ class TaskManagementController {
                 }
             )
             .catch(
-                (err) => {
-                    res.json(err)
+                (error) => {
+                    res.json({
+                        error: "404"
+                    })
+                }
+            )
+    }
+
+    async getOne(req, res, next) {
+        const id = req.params.idTaskManagement;
+        await TaskManagement.findOne({ "_id": id })
+            .populate({
+                path: 'user',
+                select: 'username fullname'
+
+            })
+            .then(
+                (post) => {
+                    res.json(post)
+                }
+            )
+            .catch(
+                err => {
+                    err
                 }
             )
     }
 
 
     async deleteTaskManagerment(req, res, next) {
-        const userId = req.body.idUser;
-        const idTaskManagement = req.body.idTaskManagement;
+        const idTaskManagement = req.params.idTaskManagement;
         await TaskManagement.findOne({ "_id": idTaskManagement })
             .populate({
                 path: 'user',
@@ -64,7 +87,7 @@ class TaskManagementController {
                 async (taskManagement) => {
                     if (!taskManagement) {
                         return res.status(404).json({ message: 'Task management not found' });
-                    } else if (taskManagement.user._id.toString() === userId) {
+                    } else if (taskManagement) {
                         const idTodoList = taskManagement.todoList
                         const idTodoListArr = idTodoList.map(id => id.toString())
                         const result = idTodoListArr.map(async (item) => {
@@ -76,28 +99,28 @@ class TaskManagementController {
                         });
 
                     } else {
-                        return res.status(404).json({ message: 'not found' })
+                        (error) => {
+                            res.json({
+                                error: "not found"
+                            })
+                        }
                     }
 
 
                 }
             )
             .catch(
-                (err) => res.json({ message: err })
+                (error) => {
+                    res.json({
+                        error: "404"
+                    })
+                }
             )
     }
 
     async updateTaskManagerment(req, res, next) {
         const newTask_name = req.body.taskName;
-        const newCreateAt = new Date(req.body.createAt);
-        newCreateAt.setDate(newCreateAt.getDate() + 1);
-        const newCreateAtISO = newCreateAt.toISOString();
-
-        const newUpdateAt = new Date(req.body.updateAt);
-        newUpdateAt.setDate(newUpdateAt.getDate() + 1);
-        const newUpdateAtISO = newUpdateAt.toISOString();
-
-        const userId = req.body.idUser;
+        const newUpdateAt = req.body.updateAt;
         const idTaskManagement = req.body.idTaskManagement;
         await TaskManagement.findOne({ "_id": idTaskManagement })
             .populate({
@@ -105,13 +128,11 @@ class TaskManagementController {
                 select: 'username fullname'
             })
             .then(async (taskManagement) => {
-                if (taskManagement && taskManagement.user._id.toString() === userId) {
+                if (taskManagement) {
                     const updateData = {
-                        task_name: newTask_name || taskManagement.task_name,
-                        createAt: newCreateAtISO || taskManagement.createAt,
-                        updateAt: newUpdateAtISO || taskManagement.updateAt,
+                        taskName: newTask_name || taskManagement.taskName,
+                        updateAt: newUpdateAt,
                     }
-                    console.log(updateData)
                     const resilt = await TaskManagement.updateOne(
                         { _id: idTaskManagement },
                         { $set: updateData }
@@ -121,9 +142,7 @@ class TaskManagementController {
                         taskManagement: taskManagement,
                         message: "Update success"
                     }
-
                     )
-
 
                 } else {
                     res.status(404).json({ message: "Task is not found" });
@@ -131,7 +150,11 @@ class TaskManagementController {
             }
             )
             .catch(
-                (err) => res.json({ message: err })
+                (error) => {
+                    res.json({
+                        error: error
+                    })
+                }
             )
     }
 

@@ -8,32 +8,49 @@ class ToDoListController {
     async createTodoList(req, res, next) {
         try {
             const todoListData = req.body;
-            const idTaskManagement = req.body.idTaskManagement;
+            const idTaskManagement = req.params.idTaskManagement;
             const taskManagement = await TaskManagement.findById(idTaskManagement);
+            const startDateString = todoListData.startDate;
+            const [days, months, years] = startDateString.split('/');
+            const dateStart = new Date(`${years}-${months}-${days}T00:00:00Z`);
+
+            const endDateString = todoListData.endDate;
+            const [daye, monthe, yeare] = endDateString.split('/');
+            const dateEnd = new Date(`${yeare}-${monthe}-${daye}T00:00:00Z`);
+
             if (!taskManagement) {
                 return res.status(404).json({ message: 'Task management not found' });
             } else {
-                const newToDoList = new TodoList(todoListData);
+                console.log("sdjfdfk")
+                const newToDoList = new TodoList({
+                    "title": todoListData.title,
+                    "detail": todoListData.detail,
+                    "startDate": dateStart,
+                    "endDate": dateEnd,
+                    "label": todoListData.label,
+                    "status": todoListData.status,
+                    "prioritize": todoListData.prioritize,
+                    "taskManagement": idTaskManagement
+
+                });
                 const tdoList = await newToDoList.save();
                 taskManagement.todoList.push(tdoList._id);
                 await taskManagement.save();
                 return res.status(201).json({ message: 'Add success', todoList: tdoList });
             }
         } catch (err) {
-            return res.status(500).json({ message: 'Server error', error: err });
+            return res.status(404).json({ error: err });
         }
     }
-    
+
     async showToDoList(req, res, next) {
-        const userId = req.body.idUser;
-        const idTaskManagement = req.body.idTaskManagement;
+        const idTaskManagement = req.params.idTaskManagement;
         var page = req.query.page || 1;
-        var limitPage = 6;
+        var limitPage = 100;
         var totalToDoList = await TodoList.countDocuments();
 
         var maxPage = Math.ceil(totalToDoList / limitPage);
         await TodoList
-            .find({ user: userId })
             .find({ taskManagement: idTaskManagement })
             .sort({ createdAt: -1 })
             .skip((page - 1) * limitPage)
@@ -45,7 +62,7 @@ class ToDoListController {
             })
             .populate({
                 path: 'taskManagement',
-                select: 'task_name'
+                select: 'taskName'
 
             })
             .then(
@@ -94,8 +111,8 @@ class ToDoListController {
         const idTodolist = req.body.idTodolist;
         const title = req.body.title;
         const detail = req.body.detail;
-        const startDate = new Date(req.body.startDate);
-        const endDate = new Date(req.body.endDate);
+        const startDate = req.body.startDate;
+        const endDate = req.body.endDate;
         const label = req.body.label;
         const status = req.body.status;
         const prioritize = req.body.prioritize;
@@ -133,9 +150,8 @@ class ToDoListController {
 
 
     async deleteToDolist(req, res, next) {
-        const idTaskManagement = req.body.idTaskManagement;
-        const userId = req.body.idUser;
-        const idTodoList = req.body.idTodoList;
+        const idTaskManagement = req.params.idTaskManagement;
+        const idTodoList = req.params.idTodoList;
         let messageTodo = "";
         let messageTask = "";
         try {
@@ -148,7 +164,7 @@ class ToDoListController {
                     async (taskManagement) => {
                         if (!taskManagement) {
                             return res.status(404).json({ message: 'Task management not found' });
-                        } else if (taskManagement.user._id.toString() === userId) {
+                        } else if (taskManagement) {
                             const todoListArr = taskManagement.todoList
                             const idTodoListTask = todoListArr.map(id => id.toString())
                             const result = idTodoListTask.map(async (item, index) => {
@@ -177,7 +193,7 @@ class ToDoListController {
                     async (todoList) => {
                         if (!todoList) {
                             messageTodo = 'Todo list not found'; return
-                        } else if (todoList.user._id.toString() === userId) {
+                        } else if (todoList) {
                             await TodoList.deleteOne({ "_id": idTodoList })
                             return messageTodo = 'Todo list deleted successfully';
                         } else {
