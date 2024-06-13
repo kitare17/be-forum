@@ -18,4 +18,6 @@ router.put("/:groupId/members", GroupController.joinGroup)
 router.delete("/:groupId/members", GroupController.removeMemberGroup)
 
 router.get("/query/find", GroupController.findGroup);
+router.post("/docs/add", GroupController.createDoc);
+router.get("/:groupId/docs/get", GroupController.getDocGroup);
 module.exports = router;

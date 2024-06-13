@@ -1,5 +1,6 @@
 const Group = require("../model/Group");
 const GroupNotificaton = require("../model/GroupNotification");
+const DocShare = require("../model/DocShare");
 
 const Post = require("../model/Post");
 
@@ -274,10 +275,10 @@ class GroupController {
         const groupName = req.query.groupName;
         var page = req.query.page || 1;
         var limitPage = 12;
-        var totalPosts = await Group.find({groupName: { $regex: '.*' + groupName + '.*' } }).countDocuments();
+        var totalPosts = await Group.find({groupName: {$regex: '.*' + groupName + '.*'}}).countDocuments();
         var maxPage = Math.ceil(totalPosts / limitPage);
 
-        Group.find({groupName: { $regex: '.*' + groupName + '.*' } })
+        Group.find({groupName: {$regex: '.*' + groupName + '.*'}})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
@@ -286,10 +287,10 @@ class GroupController {
                 select: 'username fullname'
             })
             .then((groups) => {
-                 console.log("groupName ",groupName)
+                console.log("groupName ", groupName)
                 res.json({
                     groups: groups,
-                    maxPage:maxPage
+                    maxPage: maxPage
                 })
             })
             .catch((err) => {
@@ -300,6 +301,58 @@ class GroupController {
                     }
                 )
             })
+    }
+
+    async getDocGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        DocShare.find({"group": groupId})
+            .then((docs) => {
+
+                if (docs)
+
+                    res.status(200).json(
+                        {
+                            docs: docs
+                        }
+                    )
+                else {
+                    res.status(200).json(
+                        {
+                            message: "not found"
+                        }
+                    )
+                }
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
+
+    async createDoc(req, res, next) {
+        const groupDataBody = req.body;
+        const newDoc = new DocShare(groupDataBody);
+        await newDoc.save()
+            .then(
+                (doc) => {
+                    doc.populate({
+                        path: 'group',
+                    })
+                        .then(
+                            (resData) => {
+                                return res.json(resData);
+
+                            }
+                        )
+
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
     }
 
 }
