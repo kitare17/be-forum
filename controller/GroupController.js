@@ -307,9 +307,7 @@ class GroupController {
         const groupId = req.params.groupId;
         DocShare.find({"group": groupId})
             .then((docs) => {
-
                 if (docs)
-
                     res.status(200).json(
                         {
                             docs: docs
@@ -353,6 +351,44 @@ class GroupController {
             .catch(
                 (err) => res.json(err)
             )
+    }
+
+    async deleteDoc(req, res, next) {
+        const docId = req.params.docId;
+        const groupId = req.params.groupId;
+        DocShare.deleteOne({"_id": docId})
+            .then(doc => {
+                DocShare.find({"group": groupId})
+                    .then((docs) => {
+                        if (docs)
+                            res.status(200).json(
+                                {
+                                    docs: docs,
+                                    message: "Xóa tài liệu thành công"
+                                }
+                            )
+                        else {
+                            res.status(200).json(
+                                {
+                                    message: "not found"
+                                }
+                            )
+                        }
+                    })
+                    .catch((err) => {
+                        res.status(500).json(
+                            {
+                                err: err
+                            }
+                        )
+                    })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    err: err
+                })
+            })
+
     }
 
 }
