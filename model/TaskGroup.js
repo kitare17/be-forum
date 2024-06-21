@@ -5,11 +5,11 @@ mongoose.plugin(slug);
 
 
 const TaskGroup = new Schema({
-        name: {
+        title: {
             type: String,
             required: true
         },
-        description: {
+        detail: {
             type: String,
             required: true
         },
@@ -32,12 +32,16 @@ const TaskGroup = new Schema({
             default:"Thấp",
             required: true
         },
-        slug: {
-            type: String,
-            slug: 'title',
-            unique:true
 
-        }
+        startDate: {
+            type: String,
+            required: true
+        },
+        endDate: {
+            type: String,
+            required: true
+        },
+
     },
     {
         timestamps: true

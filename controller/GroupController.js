@@ -1,6 +1,7 @@
 const Group = require("../model/Group");
 const GroupNotificaton = require("../model/GroupNotification");
 const DocShare = require("../model/DocShare");
+const TaskGroup = require("../model/TaskGroup");
 
 const Post = require("../model/Post");
 
@@ -36,7 +37,10 @@ class GroupController {
                 path: 'adminGroup',
                 select: 'username fullname'
             })
-
+            .populate({
+                path: 'members',
+                select: 'username fullname'
+            })
             .then(
                 (group) => {
                     res.json(group)
@@ -307,9 +311,7 @@ class GroupController {
         const groupId = req.params.groupId;
         DocShare.find({"group": groupId})
             .then((docs) => {
-
                 if (docs)
-
                     res.status(200).json(
                         {
                             docs: docs
@@ -355,6 +357,100 @@ class GroupController {
             )
     }
 
+    async deleteDoc(req, res, next) {
+        const docId = req.params.docId;
+        const groupId = req.params.groupId;
+        DocShare.deleteOne({"_id": docId})
+            .then(doc => {
+                DocShare.find({"group": groupId})
+                    .then((docs) => {
+                        if (docs)
+                            res.status(200).json(
+                                {
+                                    docs: docs,
+                                    message: "Xóa tài liệu thành công"
+                                }
+                            )
+                        else {
+                            res.status(200).json(
+                                {
+                                    message: "not found"
+                                }
+                            )
+                        }
+                    })
+                    .catch((err) => {
+                        res.status(500).json(
+                            {
+                                err: err
+                            }
+                        )
+                    })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    err: err
+                })
+            })
+
+    }
+
+    async createTaskGroup(req, res, next) {
+        const groupDataBody = req.body;
+        const newTask = new TaskGroup(groupDataBody);
+        await newTask.save()
+            .then(
+                (task) => {
+                    task.populate({
+                        path: 'assignee',
+                        select: "username fullname"
+                    })
+                        .then(
+                            (resData) => {
+                                return res.json(resData);
+
+                            }
+                        )
+
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
+    }
+
+
+    async getTaskGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        TaskGroup.find({"group": groupId})
+            .populate({
+                path: "assignee",
+                select: 'username fullname'
+            })
+
+            .then((tasks) => {
+                if (tasks)
+                    res.status(200).json(
+                        {
+                            tasks: tasks
+                        }
+                    )
+                else {
+                    res.status(200).json(
+                        {
+                            message: "not found"
+                        }
+                    )
+                }
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
 }
 
 module.exports = new GroupController();
