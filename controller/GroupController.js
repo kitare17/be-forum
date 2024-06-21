@@ -1,6 +1,7 @@
 const Group = require("../model/Group");
 const GroupNotificaton = require("../model/GroupNotification");
 const DocShare = require("../model/DocShare");
+const TaskGroup = require("../model/TaskGroup");
 
 const Post = require("../model/Post");
 
@@ -36,7 +37,10 @@ class GroupController {
                 path: 'adminGroup',
                 select: 'username fullname'
             })
-
+            .populate({
+                path: 'members',
+                select: 'username fullname'
+            })
             .then(
                 (group) => {
                     res.json(group)
@@ -391,6 +395,62 @@ class GroupController {
 
     }
 
+    async createTaskGroup(req, res, next) {
+        const groupDataBody = req.body;
+        const newTask = new TaskGroup(groupDataBody);
+        await newTask.save()
+            .then(
+                (task) => {
+                    task.populate({
+                        path: 'assignee',
+                        select: "username fullname"
+                    })
+                        .then(
+                            (resData) => {
+                                return res.json(resData);
+
+                            }
+                        )
+
+                }
+            )
+            .catch(
+                (err) => res.json(err)
+            )
+    }
+
+
+    async getTaskGroup(req, res, next) {
+        const groupId = req.params.groupId;
+        TaskGroup.find({"group": groupId})
+            .populate({
+                path: "assignee",
+                select: 'username fullname'
+            })
+
+            .then((tasks) => {
+                if (tasks)
+                    res.status(200).json(
+                        {
+                            tasks: tasks
+                        }
+                    )
+                else {
+                    res.status(200).json(
+                        {
+                            message: "not found"
+                        }
+                    )
+                }
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
 }
 
 module.exports = new GroupController();
