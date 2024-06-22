@@ -9,6 +9,7 @@ const questionSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     answers: [answerSchema],
+    deck: { type: mongoose.Schema.Types.ObjectId, ref: "Deck", required: true },
   },
   { timestamps: true }
 );

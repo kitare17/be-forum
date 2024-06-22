@@ -4,6 +4,7 @@ exports.createDeck = async (req, res) => {
   try {
     const { name, regionType, deckOwner } = req.body;
 
+    console.log("name", name, regionType, deckOwner);
     const newDeck = new Deck({
       name,
       regionType,
