@@ -24,6 +24,7 @@ router.delete("/:groupId/docs/:docId",GroupController.deleteDoc);
 
 router.post("/:groupId/tasks",GroupController.createTaskGroup);
 router.get("/:groupId/tasks",GroupController.getTaskGroup);
+router.put("/:groupId/tasks/:taskId",GroupController.updateTaskGroup);
 
 
 module.exports = router;
