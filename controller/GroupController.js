@@ -451,6 +451,56 @@ class GroupController {
                 )
             })
     }
+
+
+    async updateTaskGroup(req, res, next) {
+        var groupId = req.params.groupId;
+        const {
+            title,
+            detail,
+            assignee,
+            label,
+            startDate,
+            endDate,
+            status
+        } = req.body
+        const taskId = req.params.taskId;
+        TaskGroup.findOne({"_id": taskId})
+
+
+            .then((task) => {
+                if (task) {
+
+                    task.title = title;
+                    task.detail = detail;
+                    task.status = status;
+                    task.assignee = assignee;
+                    task.label = label;
+                    task.startDate = startDate;
+                    task.endDate = endDate;
+
+                    task.save()
+                    res.status(200).json(
+                        {
+                            task: task
+                        }
+                    )
+                } else {
+                    res.status(200).json(
+                        {
+                            message: "not found"
+                        }
+                    )
+                }
+            })
+            .catch((err) => {
+                res.status(500).json(
+                    {
+                        err: err
+                    }
+                )
+            })
+    }
 }
 
 module.exports = new GroupController();
