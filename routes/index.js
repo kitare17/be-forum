@@ -7,6 +7,7 @@ const todoListRouter = require("./todoList");
 const reportBlogRouter = require("./report-blog");
 const reportCommentRouter = require("./report-comment");
 const groupRouter = require("./group");
+const dashboardRouter = require("./dashboard");
 
 
 function routers(app) {
@@ -19,6 +20,7 @@ function routers(app) {
     app.use("/report-blog", reportBlogRouter);
     app.use("/report-comment", reportCommentRouter);
     app.use("/groups", groupRouter);
+    app.use("/dashboard", dashboardRouter);
 }
 
 module.exports = routers;
