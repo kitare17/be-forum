@@ -163,6 +163,39 @@ class DashboardController {
         })
     }
 
+
+    async getAmountBlog7Days(req, res, next) {
+        console.log("zo")
+
+        var amountData = []
+        for (var x = 6; x >= 0; x--) {
+            var today = new Date();
+            var xDaysAgo = new Date(today.setDate(today.getDate() - x));
+            var dd = String(xDaysAgo.getDate()).padStart(2, '0');
+            var mm = String(xDaysAgo.getMonth() + 1).padStart(2, '0');
+            var yyyy = xDaysAgo.getFullYear(); // Năm
+            console.log("zo for")
+
+            var totalBlog = await Post.countDocuments({
+                $expr: {
+                    $and: [
+                        {$eq: [{$dayOfMonth: '$createdAt'}, dd]},
+                        {$eq: [{$month: '$createdAt'}, mm]},
+                        {$eq: [{$year: '$createdAt'}, yyyy]},
+                    ],
+                },
+            })
+            amountData.push(totalBlog);
+        }
+
+
+        return res.json({
+            totalBlog7Day: amountData
+        })
+    }
+
+
+
     //todo thong ke doanh thu tu ban hang
 
 }
