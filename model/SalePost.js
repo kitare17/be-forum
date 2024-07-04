@@ -72,7 +72,7 @@ const SalePost = new Schema({
             type: Boolean,
             default: false
         },
-        comments: [Comment]
+        
     },
     {
         timestamps: true

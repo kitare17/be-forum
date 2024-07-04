@@ -8,9 +8,10 @@ router.post("/",salePostController.createPost);
 router.get("/",salePostController.showSalePost);
 router.put("/:idSalePost",salePostController.updateSalePost);
 router.get("/:idSalePost",salePostController.getOne);
-router.get("/filter/:idcategory",salePostController.getBaseOnCategory);
+router.get("/filter/:idslug",salePostController.getBaseOnCategory);
 router.delete("/:idSalePost",salePostController.deleteSalePost);
-router.put("/:idSalePost/comments",salePostController.addComment);//getBaseOnCategory
+router.put("/:idSalePost/comments",salePostController.addComment);
+router.get("/related/:idCategory",salePostController.getRelated); //lấy ngẫu nhiên 5 cái có chung category của bài post đang xem
 
 
 module.exports = router;
