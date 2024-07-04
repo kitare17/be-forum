@@ -22,6 +22,9 @@ const User = new Schema({
         type: String,
         // required: [true, "require fullname"]
     },
+    avatar: {
+        type: String,
+    },
     
     phone: {
         type: String,

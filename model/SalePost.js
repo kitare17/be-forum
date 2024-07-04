@@ -35,6 +35,10 @@ const SalePost = new Schema({
             type: [String],
             required: true
         },
+        price: {
+            type: Number,
+            required: true
+        },
         productStatus: { //tinh trang (đã qua sử dụng hay new, độ mới bao nhiu %)
             type: String,
             required: true

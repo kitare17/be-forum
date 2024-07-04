@@ -14,7 +14,26 @@ const Comment = new Schema({
         userComment: {
             type: Schema.Types.ObjectId,
             ref: 'User'
-        }
+        },
+        replyComment: [{
+            _id: {
+                type: Schema.Types.ObjectId,
+                default: () => new mongoose.Types.ObjectId()
+            },
+            detail: {
+                type: String,
+                required: true
+            },
+            userComment: {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now()
+            }
+        }]
+
     },
     {
         timestamps: true
@@ -40,7 +59,7 @@ const Post = new Schema({
             default: 'Đang hoạt động'
         },
         comments: [Comment],
-        likes:[
+        likes: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'User'
