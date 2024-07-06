@@ -8,56 +8,63 @@ class UserController {
     }
 
     async create(req, res, next) {
-        const { email, password, username, fullname, phone, avatar } = req.body;
+        const { email, password, username, fullname, phone, avatar, status } = req.body;
         try {
-            const existedUserEmail = await User.findOne({
-                email: email,
-            });
-            if (existedUserEmail !== null) {
+            // Check if email already exists
+            const existedUserEmail = await User.findOne({ email });
+            if (existedUserEmail) {
                 return res.status(409).json({
-                    message: "The email of user is existed",
+                    message: "The email of user already exists",
                     data: null,
                     statusMessage: "Error",
                 });
             }
-
-            const existedUserUsername = await User.findOne({
-                username: username,
-            });
-            if (existedUserUsername !== null) {
+    
+            // Check if username already exists
+            const existedUserUsername = await User.findOne({ username });
+            if (existedUserUsername) {
                 return res.status(409).json({
-                    message: "The username of user is existed",
+                    message: "The username of user already exists",
                     data: null,
                     statusMessage: "Error",
                 });
             }
-
+    
+            // Hash the password
             const hash = bcrypt.hashSync(password, 10);
-            // console.log("hash", hash)
-            console.log(email + " " + password + " " + username)
+            // console.log(email, password, username, fullname, phone, avatar, status);
+    
+            // Create the user
             const createdUser = await User.create({
                 email,
                 password: hash,
                 username,
                 fullname,
-                phone, avatar
-            })
-                ;
-
-            if (createdUser) {
-                return res.json({
-                    status: 200,
-                    message: "Register user success",
-                    typeError: "",
-                    data: createdUser,
-                    statusMessage: "Success",
-                });
-            }
-
+                phone,
+                avatar,
+                status,
+            });
+    
+            // Send success response
+            return res.status(201).json({
+                status: 200,
+                message: "Register user success",
+                errorType: "",
+                data: createdUser,
+                statusMessage: "Success",
+            });
         } catch (e) {
-            return e
+            // Send error response
+            return res.status(500).json({
+                message: "Internal server error",
+                error: e.message,
+                statusMessage: "Error",
+            });
         }
     }
+    
+
+    
     async login(req, res, next) {
         try {
             var email = req.body.email;
@@ -174,17 +181,20 @@ class UserController {
         const avatar = req.body.avatar;
         const email = req.body.email;
         const phone = req.body.phone;
-        console.log("sdfsdfsdfsdfsfd",avatar  )
         await User.findOne({ "_id": userId })
             .then(async (userDetail) => {
                 if (userDetail) {
                     const existEmail = await User.findOne({ "email": email })
                     const existUsername = await User.findOne({ "username": username })
+                    const existPhone = await User.findOne({ "phone": phone })
                     if (existEmail && existEmail._id.toString() !== userId) {
                         res.status(409).json({ status: "Error", message: "Email was exist" });
                     }
                     else if (existUsername && existUsername.id.toString() !== userId) {
                         res.status(409).json({ status: "Error", message: "Username was exist" });
+                    }
+                    else if (phone !== "" && existPhone && existPhone.id.toString() !== userId) {
+                        res.status(409).json({ status: "Error", message: "Phone was exist" });
                     }
                     else {
                         const userProfile = {
@@ -194,7 +204,8 @@ class UserController {
                             admin: userDetail.admin,
                             fullname: fullname || userDetail.fullname,
                             phone: phone || userDetail.phone,
-                            avatar: avatar || userDetail.avatar
+                            avatar: avatar || userDetail.avatar,
+                            status: userDetail.status
                         }
                         await User.updateOne(
                             { _id: userId },

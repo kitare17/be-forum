@@ -165,6 +165,142 @@ class DashboardController {
 
     //todo thong ke doanh thu tu ban hang
 
+
+
+    /// manager user
+
+    async showUser(req, res, next) {
+        var page = req.query.page || 1;
+        var limitPage = 6;
+        var totalUsers = await User.countDocuments();
+        var maxPage = Math.ceil(totalUsers / limitPage);
+        await User
+            .find()
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .then(
+                (users) => {
+                    res.json({
+                            users: users,
+                            maxPage: maxPage
+                        }
+                    )
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
+            )
+    }
+
+    async updateStatusUser(req, res, next) {
+        var userId = req.body.userId;
+        await User
+            .findOne({_id: userId})
+            .then(
+                (user) => {
+                    user.status = !user.status;
+                    user.save();
+                    res.json({
+                            user: user
+                        }
+                    )
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
+            )
+    }
+
+    async updateUser(req, res, next) {
+        const userId = req.body.userId;
+        const username = req.body.username;
+        const fullname = req.body.fullname;
+        const avatar = req.body.avatar;
+        const email = req.body.email;
+        const phone = req.body.phone;
+        await User.findOne({ "_id": userId })
+            .then(async (userDetail) => {
+                if (userDetail) {
+                    const existEmail = await User.findOne({ "email": email })
+                    const existUsername = await User.findOne({ "username": username })
+                    const existPhone = await User.findOne({"phone": phone})
+                    if (existEmail && existEmail._id.toString() !== userId) {
+                        res.status(409).json({ status: "Error", message: "Email was exist" });
+                    }
+                    else if (existUsername && existUsername.id.toString() !== userId) {
+                        res.status(409).json({ status: "Error", message: "Username was exist" });
+                    }
+                    else if (existPhone && existPhone.id.toString() !== userId) {
+                        res.status(409).json({ status: "Error", message: "Phone was exist" });
+                    }
+                    else {
+                        const userProfile = {
+                            username: username || userDetail.username,
+                            email: email || userDetail.email,
+                            password: userDetail.password,
+                            admin: userDetail.admin,
+                            fullname: fullname || userDetail.fullname,
+                            phone: phone || userDetail.phone,
+                            avatar: avatar || userDetail.avatar
+                        }
+                        await User.updateOne(
+                            { _id: userId },
+                            { $set: userProfile }
+                        )
+                        res.status(200).json({
+                            user: userProfile,
+                            status: "Success",
+                            message: "Update success"
+                        }
+                        )
+                    }
+
+
+
+                } else {
+                    res.status(404).json({ status: "Error", message: "USer is not found" });
+                }
+            })
+    }
+
+    async findUser(req, res, next) {
+        var page = req.query.page || 1;
+        var searchUser = req.query.searchUser;
+        console.log("searchUser", searchUser);
+
+        var limitPage = 6;
+        var totalUsers = await Post.find({username: {$regex: '.*' + searchUser + '.*'}}).countDocuments();
+        var maxPage = Math.ceil(totalUsers / limitPage);
+        await User
+            .find({username: {$regex: '.*' + searchUser + '.*'}})
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .then(
+                (users) => {
+                    res.json({
+                            users: users,
+                            maxPage: maxPage
+                        }
+                    )
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
+            )
+    }
+
+    
+    
+
+
 }
 
 module.exports = new DashboardController();
