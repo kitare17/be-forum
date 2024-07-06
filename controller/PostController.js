@@ -24,7 +24,7 @@ class PostController {
         var totalPosts = await Post.countDocuments();
         var maxPage = Math.ceil(totalPosts / limitPage);
         await Post
-            .find()
+            .find({statusPost:"Đang hoạt động"})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
@@ -477,6 +477,55 @@ class PostController {
                 })
             })
 
+    }
+
+
+    async checkStatus(req, res, next) {
+        const id = req.params.idPost;
+        await Post.findOne({"_id": id})
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname'
+                }
+            })
+            .populate({
+                path: 'topic'
+            })
+            .populate({
+                path: 'comments.replyComment',
+                populate: {
+                    path: 'userComment',
+                    model: 'User',
+                    select: 'username fullname',
+                }
+            })
+            .then(
+                (post) => {
+                    if(post.statusPost==="Đang hoạt động"){
+                        res.json(post)
+
+                    }
+                    else{
+                        res.status(500).json({
+                            message: "Bài viết không hợp lệ bạn sẽ được trả về trang chủ"
+                        })
+
+                    }
+                }
+            )
+            .catch(
+                err => {
+                    err
+                }
+            )
     }
 
 }
