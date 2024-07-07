@@ -73,14 +73,14 @@ class SalePostController {
                 select: 'username fullname'
 
             })
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'userComment',
-                    model: 'User',
-                    select: 'username fullname'
-                }
-            })
+            // .populate({
+            //     path: 'comments',
+            //     populate: {
+            //         path: 'userComment',
+            //         model: 'User',
+            //         select: 'username fullname'
+            //     }
+            // })
             .then(
                 (salePosts) => {
                     res.json({
@@ -104,14 +104,14 @@ class SalePostController {
                 select: 'username fullname'
 
             })
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'userComment',
-                    model: 'User',
-                    select: 'username fullname'
-                }
-            })
+            // .populate({
+            //     path: 'comments',
+            //     populate: {
+            //         path: 'userComment',
+            //         model: 'User',
+            //         select: 'username fullname'
+            //     }
+            // })
             .then(
                 (salePost)=>{
                     res.json(salePost)

@@ -46,7 +46,7 @@ class WishlistController {
             .then(
                 (wishlist)=>{
                     res.json(wishlist)
-                    // res.send('hello')
+                    // res.send(id)
                 }
             )
             .catch(
