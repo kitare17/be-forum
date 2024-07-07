@@ -4,6 +4,7 @@ const salePostsRouter = require("./saleposts");
 const categoriesRouter = require("./categories");
 const topicsRouter = require("./topics");
 const todoListRouter = require("./todoList");
+const taskManagementRouter = require("./TaskManagement");
 const reportBlogRouter = require("./report-blog");
 const reportCommentRouter = require("./report-comment");
 const groupRouter = require("./group");
@@ -17,6 +18,7 @@ function routers(app) {
     app.use("/categories", categoriesRouter);
     app.use("/topics", topicsRouter);
     app.use("/todoList", todoListRouter);
+    app.use("/taskManagement", taskManagementRouter);
     app.use("/report-blog", reportBlogRouter);
     app.use("/report-comment", reportCommentRouter);
     app.use("/groups", groupRouter);
