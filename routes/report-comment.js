@@ -6,6 +6,10 @@ const {verifyAdmin}=require("../config/jwt/authentication")
 
 router.post("/",reportCommentController.createReportComment);
 router.get("/",reportCommentController.showReportComment);
+router.get("/show/blog",reportCommentController.showReportFollowStatusBlog);
+router.get("/status",reportCommentController.showReportCommentByStatus);
+router.put("/:reportId/choice-accept",reportCommentController.deleteCommentChoice);
+router.put("/:reportId/choice-cancel",reportCommentController.cancelChoice);
 
 
 // router.get("/",postController.showPost);
