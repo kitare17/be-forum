@@ -9,6 +9,7 @@ router.get('/report', dashboardController.getTotalReport);
 router.get('/find/blog', dashboardController.findPost);
 router.get('/getAll/blog', dashboardController.showPost);
 router.put('/edit/blog/:postId', dashboardController.updateStatusPost);
+router.get('/getAmount7Months', dashboardController.getAmountBlog7Days);
 router.get('/listUser', dashboardController.showUser);
 router.put('/updateUser', dashboardController.updateUser);
 router.put('/updateStatusUser', dashboardController.updateStatusUser);

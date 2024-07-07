@@ -4,7 +4,8 @@ const Post = require("../model/Post");
 class TopicController {
 
     async showTopic(req, res, next) {
-        await Topic.find()
+        await Topic
+            .find()
             .then((topics) => {
                 res.json({
                     topics: topics
@@ -47,7 +48,7 @@ class TopicController {
 
 
 
-        await Post.find({"topic": topicId})
+        await Post.find({"topic": topicId,statusPost:"Đang hoạt động"})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)

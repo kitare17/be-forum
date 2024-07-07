@@ -6,6 +6,9 @@ const {verifyAdmin}=require("../config/jwt/authentication")
 
 router.post("/",reportBlogController.createReportBlog);
 router.get("/",reportBlogController.showReportBlog);
+router.put("/:reportId/blog/accept",reportBlogController.blockBlogChoice);
+router.put("/:reportId/blog/cancel",reportBlogController.cancelBlogChoice);
+router.get("/show/blog",reportBlogController.showReportFollowStatusBlog);
 
 
 // router.get("/",postController.showPost);
