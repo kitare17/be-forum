@@ -25,7 +25,6 @@ exports.createQuiz = async (req, res) => {
         regionType: regionType,
         deckOwner: deckOwner,
       });
-      ("Cbi loi ne con");
       await deck.save();
       console.log("thanh cong mat roi ");
     } else {
@@ -53,10 +52,7 @@ exports.createQuiz = async (req, res) => {
 
 exports.getQuiz = async (req, res) => {
   try {
-    const questions = await Question.find().populate({
-      path: "deck",
-      model: "Deck",
-    });
+    const questions = await Question.find();
     res.status(200).json(questions);
   } catch (error) {
     console.error(error);

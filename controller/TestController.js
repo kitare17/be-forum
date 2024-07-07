@@ -23,9 +23,11 @@ exports.submitTest = async (req, res) => {
 };
 
 exports.getResultTest = async (req, res) => {
-  const { id } = req.params;
+  const { id, deckId } = req.params;
   try {
-    const tests = await Test.find({ testOwner: id }).populate("deckId");
+    const tests = await Test.find({ testOwner: id, deckId: deckId }).populate(
+      "deckId"
+    );
     if (!tests.length) {
       return res.status(404).json({ message: "No tests found for this owner" });
     }
