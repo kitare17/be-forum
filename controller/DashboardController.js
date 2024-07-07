@@ -165,7 +165,6 @@ class DashboardController {
 
 
     async getAmountBlog7Days(req, res, next) {
-        console.log("zo")
 
         var amountData = []
         for (var x = 6; x >= 0; x--) {
@@ -173,8 +172,7 @@ class DashboardController {
             var xDaysAgo = new Date(today.setDate(today.getDate() - x));
             var dd = String(xDaysAgo.getDate()).padStart(2, '0');
             var mm = String(xDaysAgo.getMonth() + 1).padStart(2, '0');
-            var yyyy = xDaysAgo.getFullYear(); // Năm
-            console.log("zo for")
+            var yyyy = xDaysAgo.getFullYear();
 
             var totalBlog = await Post.countDocuments({
                 $expr: {
@@ -195,10 +193,7 @@ class DashboardController {
     }
 
 
-
-
     //todo thong ke doanh thu tu ban hang
-
 
 
     /// manager user
@@ -257,22 +252,19 @@ class DashboardController {
         const avatar = req.body.avatar;
         const email = req.body.email;
         const phone = req.body.phone;
-        await User.findOne({ "_id": userId })
+        await User.findOne({"_id": userId})
             .then(async (userDetail) => {
                 if (userDetail) {
-                    const existEmail = await User.findOne({ "email": email })
-                    const existUsername = await User.findOne({ "username": username })
+                    const existEmail = await User.findOne({"email": email})
+                    const existUsername = await User.findOne({"username": username})
                     const existPhone = await User.findOne({"phone": phone})
                     if (existEmail && existEmail._id.toString() !== userId) {
-                        res.status(409).json({ status: "Error", message: "Email was exist" });
-                    }
-                    else if (existUsername && existUsername.id.toString() !== userId) {
-                        res.status(409).json({ status: "Error", message: "Username was exist" });
-                    }
-                    else if (existPhone && existPhone.id.toString() !== userId) {
-                        res.status(409).json({ status: "Error", message: "Phone was exist" });
-                    }
-                    else {
+                        res.status(409).json({status: "Error", message: "Email was exist"});
+                    } else if (existUsername && existUsername.id.toString() !== userId) {
+                        res.status(409).json({status: "Error", message: "Username was exist"});
+                    } else if (existPhone && existPhone.id.toString() !== userId) {
+                        res.status(409).json({status: "Error", message: "Phone was exist"});
+                    } else {
                         const userProfile = {
                             username: username || userDetail.username,
                             email: email || userDetail.email,
@@ -283,21 +275,20 @@ class DashboardController {
                             avatar: avatar || userDetail.avatar
                         }
                         await User.updateOne(
-                            { _id: userId },
-                            { $set: userProfile }
+                            {_id: userId},
+                            {$set: userProfile}
                         )
                         res.status(200).json({
-                            user: userProfile,
-                            status: "Success",
-                            message: "Update success"
-                        }
+                                user: userProfile,
+                                status: "Success",
+                                message: "Update success"
+                            }
                         )
                     }
 
 
-
                 } else {
-                    res.status(404).json({ status: "Error", message: "USer is not found" });
+                    res.status(404).json({status: "Error", message: "USer is not found"});
                 }
             })
     }
@@ -330,9 +321,6 @@ class DashboardController {
                 }
             )
     }
-
-    
-    
 
 
 }
