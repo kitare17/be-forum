@@ -19,7 +19,7 @@ class UserController {
                     statusMessage: "Error",
                 });
             }
-    
+
             // Check if username already exists
             const existedUserUsername = await User.findOne({ username });
             if (existedUserUsername) {
@@ -29,11 +29,11 @@ class UserController {
                     statusMessage: "Error",
                 });
             }
-    
+
             // Hash the password
             const hash = bcrypt.hashSync(password, 10);
             // console.log(email, password, username, fullname, phone, avatar, status);
-    
+
             // Create the user
             const createdUser = await User.create({
                 email,
@@ -44,7 +44,7 @@ class UserController {
                 avatar,
                 status,
             });
-    
+
             // Send success response
             return res.status(201).json({
                 status: 200,
@@ -62,9 +62,9 @@ class UserController {
             });
         }
     }
-    
 
-    
+
+
     async login(req, res, next) {
         try {
             var email = req.body.email;
@@ -76,46 +76,62 @@ class UserController {
                 if (userEmail) {
                     const comparePassword = bcrypt.compareSync(password, userEmail.password);
                     if (comparePassword) {
-                        var token = userEmail.signJWT();
-                        return res.json({
-                            username: userEmail.username,
-                            fullname: userEmail.fullname,
-                            userEmailId: userEmail._id,
-                            phone: userEmail.phone,
-                            email: userEmail.email,
-                            admin: userEmail.admin,
-                            token: token
-                        });
+                        if (userEmail.status === false) {
+                            res.status(401).json({
+                                status: "Error",
+                                message: "Tài khoản của bạn đã bị khóa vui lòng liên hệ admin."
+                            });
+                        } else {
+                            var token = userEmail.signJWT();
+                            return res.json({
+                                username: userEmail.username,
+                                fullname: userEmail.fullname,
+                                userEmailId: userEmail._id,
+                                phone: userEmail.phone,
+                                email: userEmail.email,
+                                admin: userEmail.admin,
+                                token: token
+                            });
+                        }
+
                     } else {
                         res.status(401).json({
                             status: "Error",
-                            message: "Username or Password are not correct"
+                            message: "Username hoặc mật khẩu không đúng"
                         });
                     }
                 } else if (checkUsername) {
                     const comparePassword = bcrypt.compareSync(password, checkUsername.password);
                     if (comparePassword) {
-                        var token = checkUsername.signJWT();
-                        return res.json({
-                            username: checkUsername.username,
-                            fullname: checkUsername.fullname,
-                            userEmailId: checkUsername._id,
-                            phone: checkUsername.phone,
-                            email: checkUsername.email,
-                            admin: checkUsername.admin,
-                            token: token
-                        });
+                        if (checkUsername.status === false) {
+                            res.status(401).json({
+                                status: "Error",
+                                message: "Tài khoản của bạn đã bị khóa vui lòng liên hệ admin."
+                            });
+                        } else {
+                            var token = checkUsername.signJWT();
+                            return res.json({
+                                username: checkUsername.username,
+                                fullname: checkUsername.fullname,
+                                userEmailId: checkUsername._id,
+                                phone: checkUsername.phone,
+                                email: checkUsername.email,
+                                admin: checkUsername.admin,
+                                token: token
+                            });
+                        }
+
                     } else {
                         res.status(401).json({
                             status: "Error",
-                            message: "Username or Password are not correct"
+                            message: "Username hoặc mật khẩu không đúng"
                         });
                     }
                 }
             } else {
                 res.status(401).json({
                     status: "Error",
-                    message: "Username or Password are not correct"
+                    message: "Username hoặc mật khẩu không đúng"
                 });
             }
         } catch (error) {
