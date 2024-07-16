@@ -13,6 +13,7 @@ router.put("/:idPost/likes",postController.likePost)
 router.put("/:idPost/unlikes",postController.unlikePost)
 router.post("/replyComment",postController.relyComment);
 router.put("/editDetail",postController.editDetail);
+router.put("/:idPost/editComment",postController.editComment);
 router.delete("/:idPost",postController.removePost);
 router.delete("/:idPost/comments/:commentId",postController.removeComment);
 
