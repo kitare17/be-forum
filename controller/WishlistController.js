@@ -7,6 +7,9 @@ class WishlistController {
         const userId = req.body.userId;
         const salePostId = req.body.salePostId;
 
+        console.log(userId);
+        console.log(salePostId);
+
         try {
             // Tìm wishlist của người dùng
             let wishlist = await Wishlist.findOne({"userId":userId});
@@ -38,6 +41,7 @@ class WishlistController {
 
     async getOne(req, res, next){ //done
         const id=req.params.userid;
+        console.log(id);
         await Wishlist.findOne({"userId":id})
             .populate({
                 path: 'postLiked'

@@ -6,6 +6,7 @@ const salePostController = require('../controller/SalePostController');
 
 router.post("/",salePostController.createPost);
 router.get("/",salePostController.showSalePost);
+router.get("/:idUser",salePostController.showSalePostByUserId);
 router.put("/:idSalePost",salePostController.updateSalePost);
 router.get("/:idSalePost",salePostController.getOne);
 router.get("/filter/:idslug",salePostController.getBaseOnCategory);

@@ -57,14 +57,47 @@ class SalePostController {
             );
 
     }
-
-    async showSalePost(req, res, next) { //done
+    async showSalePostByUserId(req, res, next) {
+        const userId = req.params.idUser; // Assuming you have user info in the request
         var page = req.query.page || 1;
         var limitPage = 8;
-        var totalPosts = await SalePost.countDocuments();
+        var totalPosts = await SalePost.countDocuments({ creator: userId });
+        var maxPage = Math.ceil(totalPosts / limitPage);
+        
+        await SalePost
+            .find({ creator: userId })
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+            })
+            .then(
+                (salePosts) => {
+                    res.json({
+                        salePosts: salePosts,
+                        maxPage: maxPage
+                    })
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
+            )
+    }
+
+
+    async showSalePost(req, res, next) { //done
+        console.log("Fetching sale posts...");
+    var page = req.query.page || 1;
+    var limitPage = 8;
+    var totalPosts = await SalePost.countDocuments();
+    console.log("Total posts:", totalPosts);
         var maxPage = Math.ceil(totalPosts / limitPage);
         await SalePost
-            .find()
+            .find({isLock: false, isSold: false})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
@@ -180,24 +213,23 @@ class SalePostController {
 
     async getBaseOnCategory(req, res, next) {
         const slugId = req.params.idslug;
-    
+        console.log(slugId);
         try {
-            const category = await Category.findOne({ "slug": slugId }, '_id');
+            const category = await Category.find({"_id": slugId,isLock: false, isSold: false});
     
             if (!category) {
                 res.status(404).json({ error: 'Category not found' });
                 return;
             }
+
     
-            const categoryID = category._id;
-    
-            const page = req.query.page || 1;
+            const page = parseInt(req.query.page) || 1;
             const limitPage = 8;
     
-            const totalPosts = await SalePost.countDocuments({ "category": categoryID });
+            const totalPosts = await SalePost.countDocuments({ "category": slugId });
             const maxPage = Math.ceil(totalPosts / limitPage);
     
-            const salePosts = await SalePost.find({ "category": categoryID })
+            const salePosts = await SalePost.find({ "category": slugId })
                 .sort({ createdAt: -1 })
                 .skip((page - 1) * limitPage)
                 .limit(limitPage)
@@ -205,15 +237,7 @@ class SalePostController {
                     path: 'creator',
                     select: 'username fullname'
                 })
-                .populate({
-                    path: 'comments',
-                    populate: {
-                        path: 'userComment',
-                        model: 'User',
-                        select: 'username fullname'
-                    }
-                });
-    
+               
             res.json({ salePosts: salePosts, maxPage: maxPage });
         } catch (error) {
             res.status(500).json({ error: error.message });

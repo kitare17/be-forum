@@ -61,10 +61,13 @@ class UserController {
     async login(req, res, next) {
         var email = req.body.email;
         var password = req.body.password;
+
         var userEmail = await User.findOne({"email": email});
 
         if (userEmail) {
             const comparePassword = bcrypt.compareSync(password, userEmail.password);
+           
+            console.log(comparePassword);
             if (comparePassword) {
                 var token = userEmail.signJWT();
                 return res.json({
