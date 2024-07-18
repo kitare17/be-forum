@@ -27,7 +27,7 @@ const ReportComment = new Schema({
         },
         status: {
             type: String,
-            enum: ['Đang chờ xử lí', 'Đang giải quyết', "Không hợp lệ"],
+            enum: ['Đang chờ xử lí', 'Đã giải quyết', "Báo cáo không hợp lệ"],
             default: 'Đang chờ xử lí'
         }
     },
