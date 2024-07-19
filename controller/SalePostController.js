@@ -298,26 +298,31 @@ class SalePostController {
             );
 
     }
-
-    async getRelated(req, res, next) { // lấy ngẫu nhiên 5 bài post liên quan (dựa vào category chung)
+    async getRelated(req, res, next) {
         const cateId = req.params.idCategory;
-        await SalePost.aggregate([
-            { $match: { "category": ObjectId(cateId)} }, // Lọc theo id nếu cần thiết
-            { $sample: { size: 5 } }   // Lấy ngẫu nhiên 5 bản ghi
-        ])
-        .then(
-            (salePosts) => {
-                res.json(salePosts);
 
-            }
-        )
-        .catch(
-            (error) => {
-                res.json({
-                    error: error
-                });
-            }
-        );
+        await SalePost.aggregate([
+            {
+                $match: {
+                    "category": ObjectId(cateId),
+                    isLock: false,
+                    isSold: false
+                }
+            },
+            { $sample: { size: 5 } } // Lấy ngẫu nhiên 5 bản ghi
+        ])
+            .then(
+                (salePosts) => {
+                    res.json(salePosts);
+                }
+            )
+            .catch(
+                (error) => {
+                    res.json({
+                        error: error
+                    });
+                }
+            );
     }
 
     
