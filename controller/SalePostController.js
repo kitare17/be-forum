@@ -1,5 +1,8 @@
 const SalePost = require("../model/SalePost")
 const Comment = require("../model/SalePost")
+const Category = require("../model/Category")
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 //tạo post , thêm comment
 class SalePostController {
 
@@ -54,14 +57,47 @@ class SalePostController {
             );
 
     }
-
-    async showSalePost(req, res, next) { //done
+    async showSalePostByUserId(req, res, next) {
+        const userId = req.params.idUser; // Assuming you have user info in the request
         var page = req.query.page || 1;
         var limitPage = 8;
-        var totalPosts = await SalePost.countDocuments();
+        var totalPosts = await SalePost.countDocuments({ creator: userId });
+        var maxPage = Math.ceil(totalPosts / limitPage);
+        
+        await SalePost
+            .find({ creator: userId })
+            .sort({createdAt: -1})
+            .skip((page - 1) * limitPage)
+            .limit(limitPage)
+            .populate({
+                path: 'creator',
+                select: 'username fullname'
+            })
+            .then(
+                (salePosts) => {
+                    res.json({
+                        salePosts: salePosts,
+                        maxPage: maxPage
+                    })
+                }
+            )
+            .catch(
+                (err) => {
+                    res.json(err)
+                }
+            )
+    }
+
+
+    async showSalePost(req, res, next) { //done
+        console.log("Fetching sale posts...");
+    var page = req.query.page || 1;
+    var limitPage = 8;
+    var totalPosts = await SalePost.countDocuments();
+    console.log("Total posts:", totalPosts);
         var maxPage = Math.ceil(totalPosts / limitPage);
         await SalePost
-            .find()
+            .find({isLock: false, isSold: false})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)
@@ -70,14 +106,14 @@ class SalePostController {
                 select: 'username fullname'
 
             })
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'userComment',
-                    model: 'User',
-                    select: 'username fullname'
-                }
-            })
+            // .populate({
+            //     path: 'comments',
+            //     populate: {
+            //         path: 'userComment',
+            //         model: 'User',
+            //         select: 'username fullname'
+            //     }
+            // })
             .then(
                 (salePosts) => {
                     res.json({
@@ -101,14 +137,14 @@ class SalePostController {
                 select: 'username fullname'
 
             })
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'userComment',
-                    model: 'User',
-                    select: 'username fullname'
-                }
-            })
+            // .populate({
+            //     path: 'comments',
+            //     populate: {
+            //         path: 'userComment',
+            //         model: 'User',
+            //         select: 'username fullname'
+            //     }
+            // })
             .then(
                 (salePost)=>{
                     res.json(salePost)
@@ -120,33 +156,97 @@ class SalePostController {
                 }
             )
     }
-    async getBaseOnCategory(req, res, next){ //done  //chua bo vo router
-        const cateid=req.params.idcategory;
-        await SalePost.find({"category":cateid})
-            .populate({
-                path: 'creator',
-                select: 'username fullname'
+    // async getBaseOnCategory(req, res, next){ 
+    //     const slugId= req.params.idslug
+    //     const jsonString = ''
+    //     await Category.find({"slug": slugId},'_id')
+    //         .then(
+    //             (category) => {
+    //                  jsonString = JSON.stringify(category)
+                    
+    //             }
+    //         )
+    //         .catch(
+    //             (error) => {
+    //                 res.json({
+    //                     error: error
+    //                 })
+    //             }
+    //         );
+    //     var page = req.query.page || 1;
+    //     var limitPage = 8;
+    //     var totalPosts = await SalePost.countDocuments();
+    //     var maxPage = Math.ceil(totalPosts / limitPage);
+    //     await SalePost
+    //         .find({"category":jsonString._id})
+    //         .sort({createdAt: -1})
+    //         .skip((page - 1) * limitPage)
+    //         .limit(limitPage)
+    //         .populate({
+    //             path: 'creator',
+    //             select: 'username fullname'
 
-            })
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'userComment',
-                    model: 'User',
+    //         })
+    //         .populate({
+    //             path: 'comments',
+    //             populate: {
+    //                 path: 'userComment',
+    //                 model: 'User',
+    //                 select: 'username fullname'
+    //             }
+    //         })
+    //         .then(
+    //             (salePosts) => {
+    //                 res.json({
+    //                     salePosts: salePosts,
+    //                         maxPage: maxPage
+    //                     }
+    //                 )
+    //             }
+    //         )
+    //         .catch(
+    //             (err) => {
+    //                 res.json(err)
+    //             }
+    //         )
+    // }
+
+    async getBaseOnCategory(req, res, next) {
+        const slugId = req.params.idslug;
+        console.log(slugId);
+        try {
+            const category = await Category.find({"_id": slugId,isLock: false, isSold: false});
+    
+            if (!category) {
+                res.status(404).json({ error: 'Category not found' });
+                return;
+            }
+
+    
+            const page = parseInt(req.query.page) || 1;
+            const limitPage = 8;
+    
+            const totalPosts = await SalePost.countDocuments({ "category": slugId });
+            const maxPage = Math.ceil(totalPosts / limitPage);
+    
+            const salePosts = await SalePost.find({ "category": slugId })
+                .sort({ createdAt: -1 })
+                .skip((page - 1) * limitPage)
+                .limit(limitPage)
+                .populate({
+                    path: 'creator',
                     select: 'username fullname'
-                }
-            })
-            .then(
-                (salePost)=>{
-                    res.json(salePost)
-                }
-            )
-            .catch(
-                err=>{
-                    err
-                }
-            )
+                })
+               
+            res.json({ salePosts: salePosts, maxPage: maxPage });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
+    
+
+
+    
 
     async addComment(req, res, next) { //done
         const newComment = req.body;
@@ -197,6 +297,32 @@ class SalePostController {
                 }
             );
 
+    }
+    async getRelated(req, res, next) {
+        const cateId = req.params.idCategory;
+
+        await SalePost.aggregate([
+            {
+                $match: {
+                    "category": ObjectId(cateId),
+                    isLock: false,
+                    isSold: false
+                }
+            },
+            { $sample: { size: 5 } } // Lấy ngẫu nhiên 5 bản ghi
+        ])
+            .then(
+                (salePosts) => {
+                    res.json(salePosts);
+                }
+            )
+            .catch(
+                (error) => {
+                    res.json({
+                        error: error
+                    });
+                }
+            );
     }
 
     

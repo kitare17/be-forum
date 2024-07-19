@@ -60,6 +60,10 @@ const SalePost = new Schema({
             type: String,
             required: true
         },
+        phone: { //khu vực (dạng kiểu địa chỉ tương đối hoặc địa chỉ tuyệt đối )
+            type: String,
+            required: true
+        },
         creator: {
             type: Schema.Types.ObjectId,
             ref: 'User'
@@ -72,7 +76,7 @@ const SalePost = new Schema({
             type: Boolean,
             default: false
         },
-        comments: [Comment]
+        
     },
     {
         timestamps: true

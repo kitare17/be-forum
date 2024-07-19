@@ -20,7 +20,7 @@ class PostController {
 
     async showPost(req, res, next) {
         var page = req.query.page || 1;
-        var limitPage = 6;
+        var limitPage = 18;
         var totalPosts = await Post.countDocuments();
         var maxPage = Math.ceil(totalPosts / limitPage);
         await Post
