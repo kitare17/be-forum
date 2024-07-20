@@ -6,12 +6,10 @@ const User = new Schema({
     username: {
         type: String,
         required: [true, "require username"],
-        unique: true,
     },
     email: {
         type: String,
         required: [true, "require email"],
-        unique: true,
 
     },
     password: {
@@ -20,18 +18,20 @@ const User = new Schema({
     },
     fullname: {
         type: String,
-        // required: [true, "require fullname"]
+    },
+    avatar: {
+        type: String,
     },
     
     phone: {
-        type: String,
-        // required: [true, "require phone"],
-        unique: true,
-        sparse: true
+        type: String    
     },
     admin: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: Boolean,
     }
 })
 User.methods.signJWT = function () {

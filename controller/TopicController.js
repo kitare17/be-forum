@@ -4,7 +4,8 @@ const Post = require("../model/Post");
 class TopicController {
 
     async showTopic(req, res, next) {
-        await Topic.find()
+        await Topic
+            .find()
             .then((topics) => {
                 res.json({
                     topics: topics
@@ -31,19 +32,6 @@ class TopicController {
             )
     }
 
-    async createTopic(req, res, next) {
-        const topicDataBody = req.body;
-        const newTopic = new Topic(topicDataBody);
-        await newTopic.save()
-            .then(
-                (topic) => {
-                    res.json(topic);
-                }
-            )
-            .catch(
-                (err) => res.json(err)
-            )
-    }
 
     async showTopicDetail(req, res, next) {
         const slug = req.params.slug;
@@ -60,7 +48,7 @@ class TopicController {
 
 
 
-        await Post.find({"topic": topicId})
+        await Post.find({"topic": topicId,statusPost:"Đang hoạt động"})
             .sort({createdAt: -1})
             .skip((page - 1) * limitPage)
             .limit(limitPage)

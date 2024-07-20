@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
-var slug = require('mongoose-slug-generator');
+var slug = require('mongoose-slug-updater');
 mongoose.plugin(slug);
 
 
@@ -14,7 +14,8 @@ const Category = new Schema({
         },
         slug : {
             type : String,
-            slug: 'name'
+            slug: 'name',
+            unique:true
         }
     },
     {
