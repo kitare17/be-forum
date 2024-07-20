@@ -20,11 +20,20 @@ exports.createDeck = async (req, res) => {
 
 // Get all decks
 exports.getDecks = async (req, res) => {
+  const { regionType, deckOwner } = req.query; // Lấy regionType và deckOwner từ query
+
   try {
-    const decks = await Deck.find();
-    res.status(200).json(decks);
+    const query = { regionType }; // Tạo đối tượng query với regionType
+
+    if (regionType === "private" && deckOwner) {
+      query.deckOwner = deckOwner; // Thêm deckOwner vào query nếu regionType là 'private'
+    }
+
+    const decks = await Deck.find(query); // Tìm các deck dựa trên query
+    res.status(200).json(decks); // Trả về các deck tìm được
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message }); // Trả về lỗi nếu có
   }
 };
 

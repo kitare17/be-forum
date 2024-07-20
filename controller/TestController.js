@@ -23,7 +23,8 @@ exports.submitTest = async (req, res) => {
 };
 
 exports.getResultTest = async (req, res) => {
-  const { id, deckId } = req.params;
+  const { id, deckId } = req.query;
+  console.log(id, deckId);
   try {
     const tests = await Test.find({ testOwner: id, deckId: deckId }).populate(
       "deckId"
