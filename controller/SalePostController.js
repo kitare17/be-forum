@@ -304,7 +304,7 @@ class SalePostController {
         await SalePost.aggregate([
             {
                 $match: {
-                    "category": ObjectId(cateId),
+                    "category": new ObjectId(cateId),
                     isLock: false,
                     isSold: false
                 }

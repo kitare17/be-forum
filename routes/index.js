@@ -11,7 +11,10 @@ const groupRouter = require("./group");
 const searchRouter = require("./search")
 const wishListRouter = require("./wishlist")
 const dashboardRouter = require("./dashboard");
+const deckRouter = require("./decks");
+const testRouter = require("./testExam");
 
+const quizRouter = require("./quiz");
 
 function routers(app) {
     app.use("/users", usersRouter);
@@ -27,6 +30,9 @@ function routers(app) {
     app.use("/search",searchRouter);
     app.use("/wishlists",wishListRouter);
     app.use("/dashboard", dashboardRouter);
+    app.use("/deck", deckRouter);
+    app.use("/quizzes", quizRouter);
+    app.use("/test", testRouter);
 }
 
 module.exports = routers;

@@ -112,7 +112,7 @@ class GroupController {
         var groupId = req.params.groupId;
         var page = req.query.page || 1;
         var limitPage = 6;
-        var totalNotification = await GroupNotificaton.countDocuments();
+        var totalNotification = await GroupNotificaton.countDocuments({"group": groupId});
         var maxPage = Math.ceil(totalNotification / limitPage);
         await GroupNotificaton
             .find({"group": groupId})
